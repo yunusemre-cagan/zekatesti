@@ -10,7 +10,15 @@ export const TEST_DURATION_SEC = 30 * 60;
 
 /**
  * Ağırlıklı başarı oranını tahmini IQ değerine çevirirken kullanılan parametreler.
+ *
  * IQ ölçeği ortalaması 100, standart sapması 15 olan normal dağılım varsayar.
+ * Elimizde gerçek bir norm (kalibrasyon) verisi olmadığı için "ortalama bir katılımcının
+ * ağırlıklı başarı oranı" ve bu oranın standart sapması varsayım olarak girilir:
+ *   z  = (oran − EXPECTED_SCORE_MEAN) / EXPECTED_SCORE_SD
+ *   IQ = MEAN + z × STANDARD_DEVIATION
+ * Bu varsayımlarla %50 başarı → 100, %100 başarı → ~144 olur. Gerçek katılımcı verisi
+ * toplandığında yalnızca bu iki değerin güncellenmesi yeterlidir.
+ *
  * Sonuç, uç değerlerin anlamsız görünmemesi için [MIN, MAX] aralığına sınırlanır.
  */
 export const IQ_SCALE = {
@@ -18,6 +26,8 @@ export const IQ_SCALE = {
   STANDARD_DEVIATION: 15,
   MIN: 70,
   MAX: 145,
+  EXPECTED_SCORE_MEAN: 0.5,
+  EXPECTED_SCORE_SD: 0.17,
 } as const;
 
 /**
