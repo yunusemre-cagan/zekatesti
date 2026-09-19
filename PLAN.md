@@ -76,8 +76,8 @@ Tipe özgü alanlar **discriminated union** ile modellenir:
 |---|---|---|
 | `single_choice` (sayısal örüntü, matris, mantık, analoji, problem çözme, ek tipler) | `options: {id, text?, image?}[]`, `correctOptionId` | Seçilen şık == doğru şık |
 | `multi_choice` (uzamsal — "hangileri aynı cisim?") | `options`, `correctOptionIds[]` | Seçilen küme == doğru küme |
-| `memory_sequence` (çalışma belleği) | `sequence[]`, `displayMs`, `transform: 'reverse' \| 'same' \| 'sorted'` | Beklenen cevap sunucuda diziden hesaplanır |
-| `speed_task` (işlemleme hızı) | `timeLimitSec`, `legend?` (sembol→rakam anahtarı), `items[]` (her biri şıklı ve cevaplı) | Süre içinde doğru yapılan madde oranı (kısmi puan) |
+| `memory_sequence` (çalışma belleği) | `sequence[]` (tek karakterlik öğeler), `itemDisplayMs`, `transform: 'reverse' \| 'same' \| 'sorted'` | Beklenen cevap sunucuda diziden hesaplanır |
+| `speed_task` (işlemleme hızı) | `timeLimitSec`, `legend?` (sembol→rakam anahtarı), `options[]` (tüm maddeler için ortak), `items[]` (`stimulus` + `correctOptionId`) | Süre içinde doğru yapılan madde oranı (kısmi puan) |
 
 Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görsel eklenebilir.
 
