@@ -75,9 +75,9 @@ Tipe özgü alanlar **discriminated union** ile modellenir:
 | Tip | Ek alanlar | Cevap kontrolü |
 |---|---|---|
 | `single_choice` (sayısal örüntü, matris, mantık, analoji, problem çözme, ek tipler) | `options: {id, text?, image?}[]`, `correctOptionId` | Seçilen şık == doğru şık |
-| `multi_choice` (uzamsal — "hangileri aynı cisim?") | `options`, `correctOptionIds[]` | Seçilen küme == doğru küme |
+| `multi_choice` (uzamsal — "hangileri aynı cisim?") | `options`, `correctOptionIds[]` | Kısmi puan; yanlış işaret puan düşürür (şans düzeltmesi) |
 | `memory_sequence` (çalışma belleği) | `sequence[]` (tek karakterlik öğeler), `itemDisplayMs`, `transform: 'reverse' \| 'same' \| 'sorted'` | Beklenen cevap sunucuda diziden hesaplanır |
-| `speed_task` (işlemleme hızı) | `timeLimitSec`, `legend?` (sembol→rakam anahtarı), `options[]` (tüm maddeler için ortak), `items[]` (`stimulus` + `correctOptionId`) | Süre içinde doğru yapılan madde oranı (kısmi puan) |
+| `speed_task` (işlemleme hızı) | `timeLimitSec`, `legend?` (sembol→rakam anahtarı), `options[]` (tüm maddeler için ortak), `items[]` (`stimulus` + `correctOptionId`) | Kısmi puan; yanlış madde puan düşürür (şans düzeltmesi) |
 
 Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görsel eklenebilir.
 
@@ -93,9 +93,16 @@ Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görse
 4. **`/api/test/submit`** — Puanlama tamamen sunucuda yapılır.
 5. **`/result`** — Tahmini IQ, doğru sayısı, kategori bazlı başarı, geçen süre, soru açıklamaları. "Klinik geçerliliği olmayan tahmini sonuçtur" uyarısı.
 
-**Puanlama:** Her soru zorluğu kadar ağırlık alır (1/2/3). Ağırlıklı başarı oranı, ortalaması 100
-ve standart sapması 15 olan dağılıma göre IQ değerine çevrilir ve 70–145 aralığında sınırlanır.
-Dönüşüm parametreleri `lib/config.ts` içinde tutulur.
+**Puanlama:** Her soru zorluğu kadar ağırlık alır (1/2/3) ve 0–1 arası puan alır. Ağırlıklı başarı
+oranı, ortalaması 100 ve standart sapması 15 olan dağılıma göre IQ değerine çevrilir, 70–145
+aralığında sınırlanır ve **her zaman tam sayı** olarak gösterilir. Dönüşüm parametreleri
+`lib/config.ts` içinde tutulur.
+
+**Şans düzeltmesi (kısmi puanlı sorular):** Çoklu seçim ve hız görevlerinde yanlış işaretler puan
+düşürür; boş bırakmak ne kazandırır ne kaybettirir. Ceza katsayıları, rastgele veya garantici
+(tüm şıkları işaretleyen) bir kullanıcının beklenen puanı sıfır olacak şekilde seçilmiştir:
+çoklu seçimde `doğru şık sayısı / yanlış şık sayısı`, hız görevinde `1 / (şık sayısı − 1)`.
+Soru puanı hiçbir zaman negatife düşmez.
 
 ---
 

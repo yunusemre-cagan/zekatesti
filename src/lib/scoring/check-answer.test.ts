@@ -29,25 +29,41 @@ describe("evaluateAnswer", () => {
   });
 
   describe("multi_choice", () => {
+    // 3 şık (a, b, c); doğru olanlar a ve c → her yanlış işaret 2/1 = 2 puan götürür.
     const question = makeMultiChoice();
 
     it("doğru kümeye (sıra fark etmeksizin) tam puan verir", () => {
       const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["c", "a"] });
-      expect(result.status).toBe("correct");
+      expect(result).toEqual({ score: 1, status: "correct" });
     });
 
-    it("eksik seçime kısmi puan vermez", () => {
+    it("iki doğrudan birini bulmaya kısmi puan verir", () => {
       const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a"] });
+      expect(result).toEqual({ score: 0.5, status: "partial" });
+    });
+
+    it("tüm şıkları işaretlemeye puan vermez (garantici seçim engellenir)", () => {
+      const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "b", "c"] });
       expect(result).toEqual({ score: 0, status: "wrong" });
     });
 
-    it("tüm şıkları işaretlemeye puan vermez", () => {
-      const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "b", "c"] });
-      expect(result.status).toBe("wrong");
+    it("yanlış işaret, doğru işaretin puanını götürür", () => {
+      const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "b"] });
+      expect(result).toEqual({ score: 0, status: "wrong" });
+    });
+
+    it("yalnızca yanlış şık işaretlendiğinde puanı negatife düşürmez", () => {
+      const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["b"] });
+      expect(result).toEqual({ score: 0, status: "wrong" });
     });
 
     it("tekrar eden seçimleri tek sayar", () => {
       const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "a", "c"] });
+      expect(result.status).toBe("correct");
+    });
+
+    it("soruda bulunmayan şık kimliklerini yok sayar", () => {
+      const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "c", "z"] });
       expect(result.status).toBe("correct");
     });
   });
@@ -72,6 +88,7 @@ describe("evaluateAnswer", () => {
   });
 
   describe("speed_task", () => {
+    // 4 madde, 2 şık → her yanlış madde 1/(2−1) = 1 madde değerinde puan götürür.
     const question = makeSpeedTask();
 
     it("tüm maddeler doğruysa tam puan verir", () => {
@@ -82,21 +99,39 @@ describe("evaluateAnswer", () => {
       });
     });
 
-    it("doğru madde oranında kısmi puan verir; cevaplanmayan madde 0 sayılır", () => {
-      const responses = { i1: "1", i2: "1", i3: "1" }; // i2 yanlış, i4 boş
+    it("yanlış maddeler puan düşürür; boş bırakılan madde etkisizdir", () => {
+      const responses = { i1: "1", i2: "1", i3: "1" }; // i1, i3 doğru; i2 yanlış; i4 boş
       expect(evaluateAnswer(question, { type: "speed_task", responses })).toEqual({
-        score: 0.5,
+        score: 0.25, // (2 doğru − 1 yanlış) / 4 madde
         status: "partial",
       });
     });
 
-    it("hiç doğru yoksa 0 puan verir", () => {
+    it("doğru sayısı kadar yanlış yapıldığında puan sıfırlanır", () => {
+      const responses = { i1: "1", i2: "1" }; // 1 doğru, 1 yanlış
+      expect(evaluateAnswer(question, { type: "speed_task", responses }).score).toBe(0);
+    });
+
+    it("yanlış sayısı doğruyu aşsa bile puanı negatife düşürmez", () => {
+      const responses = { i1: "2", i2: "1", i3: "2", i4: "1" }; // hepsi yanlış
+      expect(evaluateAnswer(question, { type: "speed_task", responses })).toEqual({
+        score: 0,
+        status: "wrong",
+      });
+    });
+
+    it("hiç cevap verilmemişse 0 puan verir", () => {
       const result = evaluateAnswer(question, { type: "speed_task", responses: {} });
       expect(result).toEqual({ score: 0, status: "wrong" });
     });
 
     it("görevde olmayan madde kimliklerini yok sayar", () => {
-      const responses = { i1: "1", yok: "1" };
+      const responses = { i1: "1", yok: "2" };
+      expect(evaluateAnswer(question, { type: "speed_task", responses }).score).toBe(0.25);
+    });
+
+    it("şıklarda bulunmayan cevap kimliğini yok sayar (yanlış saymaz)", () => {
+      const responses = { i1: "1", i2: "9" };
       expect(evaluateAnswer(question, { type: "speed_task", responses }).score).toBe(0.25);
     });
   });

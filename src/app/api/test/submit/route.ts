@@ -1,0 +1,48 @@
+/**
+ * POST /api/test/submit — Gönderilen cevapları puanlar ve sonuç özetini döner.
+ *
+ * Puanlama bilinçli olarak sunucuda yapılır: doğru cevaplar hiçbir zaman tarayıcıya gitmediği
+ * için sonuç, istemci tarafında hesaplanamaz ve değiştirilemez.
+ *
+ * Sorular gönderim anında yeniden okunur. Test sırasında admin panelinden bir soru eklenirse
+ * veya pasife alınırsa, kullanıcının görmediği sorular cevapsız sayılır; bu nadir durum,
+ * cevap anahtarını istemciye göndermemenin kabul edilebilir bir bedelidir.
+ */
+import { internalError, jsonError } from "@/lib/api/responses";
+import type { TestSubmitResponse } from "@/lib/api/contracts";
+import { questionRepository } from "@/lib/questions/repository";
+import { scoreTest } from "@/lib/scoring/score-test";
+import { submissionSchema } from "@/lib/test/answers";
+import { getTestQuestions } from "@/lib/test/ordering";
+
+export const dynamic = "force-dynamic";
+
+export async function POST(request: Request): Promise<Response> {
+  let payload: unknown;
+  try {
+    payload = await request.json();
+  } catch {
+    return jsonError(400, "İstek gövdesi geçerli bir JSON değil.");
+  }
+
+  // İstemciden gelen veri güvenilmezdir; puanlamadan önce şemaya göre doğrulanır.
+  const parsed = submissionSchema.safeParse(payload);
+  if (!parsed.success) {
+    const details = parsed.error.issues.map(
+      (issue) => `${issue.path.join(".") || "(kök)"}: ${issue.message}`,
+    );
+    return jsonError(400, "Gönderilen cevaplar geçersiz.", details);
+  }
+
+  try {
+    const questions = getTestQuestions(await questionRepository.getAll());
+    const result: TestSubmitResponse = scoreTest(
+      questions,
+      parsed.data.answers,
+      parsed.data.elapsedSec,
+    );
+    return Response.json(result);
+  } catch (error) {
+    return internalError("POST /api/test/submit", error);
+  }
+}

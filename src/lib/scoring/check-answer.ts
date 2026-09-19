@@ -3,11 +3,14 @@
  *
  * Her soru 0 ile 1 arasında bir puan alır:
  *  - single_choice   : Doğru şık → 1, aksi → 0
- *  - multi_choice    : Seçilen küme doğru kümeyle birebir aynı → 1, aksi → 0.
- *                      Kısmi puan verilmez; aksi halde tüm şıkları işaretleyen kullanıcı
- *                      tahminle puan toplayabilirdi.
+ *  - multi_choice    : Kısmi puanlı, şans düzeltmeli (aşağıya bakınız)
  *  - memory_sequence : Normalize edilmiş cevap, beklenen diziyle aynı → 1, aksi → 0
- *  - speed_task      : Doğru yapılan madde sayısı / toplam madde sayısı (kısmi puan)
+ *  - speed_task      : Kısmi puanlı, şans düzeltmeli (aşağıya bakınız)
+ *
+ * ŞANS DÜZELTMESİ (kısmi puanlı sorularda): Yanlış işaretlemeler puan düşürür; böylece
+ * rastgele/garantici işaretlemenin beklenen puanı sıfır olur ve kullanıcı emin olmadığı
+ * maddeyi boş bırakmaya (yani düşünmeye) yönelir. Boş bırakmak ne kazandırır ne kaybettirir.
+ * Puan asla 0'ın altına düşmez; bir soruda yapılan hatalar başka bir sorunun puanını götürmez.
  *
  * Tüm fonksiyonlar saftır (yan etkisizdir); aynı girdi her zaman aynı sonucu verir.
  */
@@ -100,22 +103,59 @@ function scoreSingleChoice(question: SingleChoiceQuestion, answer: SingleChoiceA
   return answer.optionId === question.correctOptionId ? 1 : 0;
 }
 
+/**
+ * Çoklu seçim: (doğru işaretler − yanlış işaretler × ceza) / doğru şık sayısı
+ *
+ * Ceza katsayısı "doğru şık sayısı / yanlış şık sayısı" seçilir. Bunun sonucu şudur:
+ * tüm şıkları işaretleyen kullanıcı tam olarak 0 alır, dolayısıyla garantici işaretleme
+ * hiçbir avantaj sağlamaz. Buna karşılık iki doğrudan birini bulan kullanıcı 0.5 alır.
+ */
 function scoreMultiChoice(question: MultiChoiceQuestion, answer: MultiChoiceAnswer): number {
-  const selected = new Set(answer.optionIds);
-  const correct = new Set(question.correctOptionIds);
-  const isExactMatch = selected.size === correct.size && [...correct].every((id) => selected.has(id));
-  return isExactMatch ? 1 : 0;
+  const correctIds = new Set(question.correctOptionIds);
+  // Tekrar eden işaretler tek sayılır; soruda bulunmayan şık kimlikleri yok sayılır.
+  const selectedIds = new Set(
+    answer.optionIds.filter((id) => question.options.some((option) => option.id === id)),
+  );
+
+  const correctCount = [...selectedIds].filter((id) => correctIds.has(id)).length;
+  const wrongCount = selectedIds.size - correctCount;
+  const incorrectOptionCount = question.options.length - correctIds.size;
+
+  // Tüm şıkların doğru olduğu (yanlış şıkkı bulunmayan) soruda ceza uygulanamaz.
+  const penaltyPerWrong = incorrectOptionCount > 0 ? correctIds.size / incorrectOptionCount : 0;
+  return clampScore((correctCount - wrongCount * penaltyPerWrong) / correctIds.size);
 }
 
 function scoreMemory(question: MemorySequenceQuestion, answer: MemorySequenceAnswer): number {
   return normalizeMemoryInput(answer.value) === getExpectedMemoryAnswer(question) ? 1 : 0;
 }
 
+/**
+ * Hız görevi: (doğru maddeler − yanlış maddeler × ceza) / toplam madde sayısı
+ *
+ * Ceza katsayısı "1 / (şık sayısı − 1)" seçilir. 5 şıklı bir görevde rastgele işaretleyen
+ * kullanıcı ortalama 5 maddede 1 doğru, 4 yanlış yapar ve beklenen puanı 0 olur.
+ * Cevaplanmayan maddeler ne kazandırır ne kaybettirir.
+ */
 function scoreSpeedTask(question: SpeedTaskQuestion, answer: SpeedTaskAnswer): number {
-  const correctCount = question.items.filter(
-    (item) => answer.responses[item.id] === item.correctOptionId,
-  ).length;
-  return correctCount / question.items.length;
+  let correctCount = 0;
+  let wrongCount = 0;
+
+  for (const item of question.items) {
+    const response = Object.hasOwn(answer.responses, item.id) ? answer.responses[item.id] : undefined;
+    // Cevapsız maddeler ve görevde bulunmayan şık kimlikleri yok sayılır (çoklu seçimdeki gibi).
+    if (response === undefined || !question.options.some((option) => option.id === response)) continue;
+    if (response === item.correctOptionId) correctCount += 1;
+    else wrongCount += 1;
+  }
+
+  const penaltyPerWrong = question.options.length > 1 ? 1 / (question.options.length - 1) : 0;
+  return clampScore((correctCount - wrongCount * penaltyPerWrong) / question.items.length);
+}
+
+/** Puanı 0–1 aralığına sınırlar (ceza nedeniyle negatife düşen puanlar 0 kabul edilir). */
+function clampScore(score: number): number {
+  return Math.min(Math.max(score, 0), 1);
 }
 
 function toEvaluation(score: number): AnswerEvaluation {
