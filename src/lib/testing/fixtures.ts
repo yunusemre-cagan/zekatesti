@@ -3,6 +3,8 @@
  *
  * Her fonksiyon geçerli bir soru döner; testler yalnızca ilgilendikleri alanı
  * `overrides` ile değiştirir. Uygulama kodu tarafından kullanılmaz.
+ *
+ * Kullanım: Yalnızca *.test.ts dosyaları tarafından kullanılır.
  */
 import type {
   MemorySequenceQuestion,

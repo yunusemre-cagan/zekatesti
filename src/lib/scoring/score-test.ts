@@ -5,6 +5,8 @@
  * daha çok etki eder. Kısmi puanlı sorularda (hız görevi) alınan puan da aynı ağırlıkla çarpılır.
  *
  * Cevaplanmayan sorular 0 puan alır; teste giren her soru toplam puana (paydaya) dahildir.
+ *
+ * Kullanım: /api/test/submit route'u tarafından çağrılır; ürettiği sonuç sonuç ekranında gösterilir.
  */
 import { TEST_DURATION_SEC } from "@/lib/config";
 import { QUESTION_CATEGORIES, type Question, type QuestionCategory } from "@/lib/questions/schema";

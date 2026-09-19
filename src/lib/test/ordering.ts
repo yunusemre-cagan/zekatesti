@@ -4,6 +4,8 @@
  * Karar (PLAN.md → "Alınan Kararlar"): Her testte tüm aktif sorular sorulur.
  * Sorular kolaydan zora sıralanır; aynı zorluktaki sorular veri dosyasındaki sıralarını korur.
  * Böylece soru sırası her katılımcı için aynıdır ve sonuçlar karşılaştırılabilir kalır.
+ *
+ * Kullanım: /api/test/start ve /api/test/submit route'ları, teste girecek soru listesini bununla belirler.
  */
 import type { Question } from "@/lib/questions/schema";
 

@@ -13,6 +13,9 @@
  *  - multi_choice    : Birden fazla doğru şık (ör. "hangileri aynı cismin döndürülmüş hali?")
  *  - memory_sequence : Dizi gösterilir, gizlenir, kullanıcı belirli bir dönüşümle yazar
  *  - speed_task      : Süreli, çok maddeli eşleştirme görevi (kısmi puanlı)
+ *
+ * Kullanım: repository.ts (dosya doğrulama), sanitize.ts, puanlama modülleri, API route'ları
+ * ve admin paneli formu bu şemaları ve türetilmiş tipleri kullanır.
  */
 import { z } from "zod";
 

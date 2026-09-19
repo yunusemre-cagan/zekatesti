@@ -3,6 +3,8 @@
  *
  * Sorular, doğru cevapları ve çözüm açıklamaları çıkarılmış halde gönderilir
  * (bkz. lib/questions/sanitize.ts). Puanlama yalnızca /api/test/submit içinde, sunucuda yapılır.
+ *
+ * Kullanım: Test ekranı (/test) açıldığında bu route'u çağırır.
  */
 import { TEST_DURATION_SEC } from "@/lib/config";
 import { internalError } from "@/lib/api/responses";

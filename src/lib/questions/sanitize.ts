@@ -11,6 +11,8 @@
  *
  * Bilinen istisna: Bellek sorusunda dizi (`sequence`) kullanıcıya gösterilmek zorunda olduğu
  * için istemciye gönderilir. Bu, testin doğası gereği kaçınılmazdır.
+ *
+ * Kullanım: /api/test/start route'u soruları göndermeden önce bu dönüşümü uygular.
  */
 import type {
   MemorySequenceQuestion,

@@ -4,6 +4,8 @@
  * Hata mesajlarının gövdesi her zaman aynı biçimdedir (`ApiErrorResponse`) ve beklenmeyen
  * hataların ayrıntısı (dosya yolları, yığın izi vb.) istemciye sızdırılmaz; yalnızca
  * sunucu günlüğüne yazılır.
+ *
+ * Kullanım: Tüm API route'ları hata durumlarında bu yardımcıları çağırır.
  */
 import type { ApiErrorResponse } from "./contracts";
 

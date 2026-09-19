@@ -4,6 +4,8 @@
  * Veride İngilizce, sabit anahtarlar tutulur (ör. "numeric_pattern"); ekranda gösterilecek
  * metinler burada eşlenir. `Record<...>` kullanıldığı için şemaya yeni bir kategori
  * eklendiğinde burada karşılığı yazılmazsa TypeScript derleme hatası verir.
+ *
+ * Kullanım: Sonuç ekranındaki kategori dökümü ve admin panelindeki açılır listeler.
  */
 import type { MemoryTransform, QuestionCategory, QuestionType } from "./schema";
 

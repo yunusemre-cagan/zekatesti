@@ -3,6 +3,8 @@
  *
  * Bilinçli olarak sade tutuldu: üyelik/giriş yoktur, tek bir "Teste Başla" butonu
  * kullanıcıyı doğrudan test ekranına götürür.
+ *
+ * Kullanım: Sitenin kök adresi; kullanıcının gördüğü ilk ekran.
  */
 import Link from "next/link";
 import { TEST_DURATION_SEC } from "@/lib/config";

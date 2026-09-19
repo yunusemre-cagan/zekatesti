@@ -3,6 +3,8 @@
  *
  * Genel `Error` yerine özel sınıflar kullanılır; böylece API katmanı hatanın türüne göre
  * doğru HTTP durum kodunu seçebilir (ör. NotFound → 404, Duplicate → 409, ReadOnly → 403).
+ *
+ * Kullanım: repository.ts bu hataları fırlatır; API route'ları yakalayıp HTTP koduna çevirir.
  */
 
 /** Veri dosyası okunamadığında veya şemaya uymadığında fırlatılır. */

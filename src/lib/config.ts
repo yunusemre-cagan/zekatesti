@@ -3,6 +3,9 @@
  *
  * Test süresi, IQ dönüşüm parametreleri gibi "ayarlanabilir" değerler tek bir yerde
  * tutulur; böylece iş mantığı içinde sihirli sayılar (magic numbers) bulunmaz.
+ *
+ * Kullanım: Açılış sayfası (süre gösterimi), /api/test/start (süre), puanlama modülleri
+ * (IQ dönüşümü) ve repository (yazma izni) bu sabitleri okur.
  */
 
 /** Testin toplam süresi (saniye). Süre dolduğunda test otomatik gönderilir. */

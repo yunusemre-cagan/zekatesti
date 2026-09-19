@@ -13,6 +13,8 @@
  * Puan asla 0'ın altına düşmez; bir soruda yapılan hatalar başka bir sorunun puanını götürmez.
  *
  * Tüm fonksiyonlar saftır (yan etkisizdir); aynı girdi her zaman aynı sonucu verir.
+ *
+ * Kullanım: score-test.ts her soru için bu modülü çağırır. Doğrudan API veya arayüz tarafından çağrılmaz.
  */
 import type {
   MemorySequenceQuestion,

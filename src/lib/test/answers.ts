@@ -7,6 +7,9 @@
  *
  * Her cevap, ait olduğu soru tipini "type" alanında taşır; böylece puanlayıcı
  * cevabın soruyla uyumlu olup olmadığını kontrol edebilir.
+ *
+ * Kullanım: /api/test/submit gelen gövdeyi doğrularken, test ekranı ise kullanıcının cevaplarını
+ * biriktirirken bu tipleri kullanır.
  */
 import { z } from "zod";
 import { questionIdSchema } from "@/lib/questions/schema";

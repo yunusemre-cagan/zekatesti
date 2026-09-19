@@ -3,6 +3,8 @@
  *
  * Hem route handler'lar hem de istemci bileşenleri bu tipleri kullanır; böylece bir uçta
  * yapılan değişiklik diğer uçta derleme hatası olarak görünür.
+ *
+ * Kullanım: /api/test/* route'ları yanıt gövdesini bu tiplere göre üretir; test ekranı aynı tiplerle okur.
  */
 import type { PublicQuestion } from "@/lib/questions/sanitize";
 import type { TestResult } from "@/lib/scoring/score-test";

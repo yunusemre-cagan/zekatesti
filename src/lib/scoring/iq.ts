@@ -3,6 +3,8 @@
  *
  * ÖNEMLİ: Bu bir tahmindir, klinik bir ölçüm değildir. Dönüşüm, gerçek norm verisi yerine
  * `IQ_SCALE` içindeki varsayımlara dayanır (ayrıntı için bkz. src/lib/config.ts).
+ *
+ * Kullanım: score-test.ts, ağırlıklı başarı oranını sonuca dönüştürürken çağırır.
  */
 import { IQ_SCALE } from "@/lib/config";
 

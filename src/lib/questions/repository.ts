@@ -8,6 +8,8 @@
  * NOT: Bu modül `node:fs` kullandığı için yalnızca sunucu tarafında (API route'ları, Server
  * Component'ler) içe aktarılabilir. Bir istemci bileşeninden içe aktarılırsa build hata verir;
  * bu, doğru cevapların yanlışlıkla tarayıcıya sızmasını da engelleyen bir güvencedir.
+ *
+ * Kullanım: /api/test/* route'ları soruları buradan okur; admin paneli route'ları buradan yazar.
  */
 import { readFile, rename, writeFile } from "node:fs/promises";
 import path from "node:path";

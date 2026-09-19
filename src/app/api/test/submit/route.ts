@@ -7,6 +7,8 @@
  * Sorular gönderim anında yeniden okunur. Test sırasında admin panelinden bir soru eklenirse
  * veya pasife alınırsa, kullanıcının görmediği sorular cevapsız sayılır; bu nadir durum,
  * cevap anahtarını istemciye göndermemenin kabul edilebilir bir bedelidir.
+ *
+ * Kullanım: Test ekranı, süre dolduğunda veya kullanıcı testi bitirdiğinde bu route'u çağırır.
  */
 import { internalError, jsonError } from "@/lib/api/responses";
 import type { TestSubmitResponse } from "@/lib/api/contracts";
