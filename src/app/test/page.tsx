@@ -1,13 +1,17 @@
 /**
- * Test ekranı (/test).
+ * Test ekranı (/).
  *
- * GEÇİCİ: Quiz akışı 5. aşamada (PLAN.md → "Uygulama Aşamaları") bu dosyaya eklenecek.
- * Şimdilik açılış sayfasındaki bağlantının 404 vermemesi için yer tutucu olarak duruyor.
+ * Sayfanın kendisi sunucu bileşenidir ve yalnızca istemci bileşeni olan TestRunner'ı çizer;
+ * sorular tarayıcıdan /api/test/start ile alınır.
+ *
+ * Kullanım: Açılış sayfasındaki "Teste Başla" bağlantısı buraya yönlendirir.
  */
+import { TestRunner } from "@/components/quiz/TestRunner";
+
+export const metadata = {
+  title: "IQ Testi — Sorular",
+};
+
 export default function TestPage() {
-  return (
-    <main className="flex flex-1 items-center justify-center px-4">
-      <p className="text-zinc-600 dark:text-zinc-400">Test ekranı hazırlanıyor.</p>
-    </main>
-  );
+  return <TestRunner />;
 }
