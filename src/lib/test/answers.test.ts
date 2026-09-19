@@ -4,7 +4,7 @@ import { submissionSchema } from "./answers";
 describe("submissionSchema", () => {
   it("her tipten cevabı içeren geçerli gönderimi kabul eder", () => {
     const result = submissionSchema.safeParse({
-      elapsedSec: 120,
+      durations: { "numeric-pattern-01": 30 },
       answers: {
         "numeric-pattern-01": { type: "single_choice", optionId: "c" },
         "spatial-01": { type: "multi_choice", optionIds: ["a", "c"] },
@@ -17,7 +17,7 @@ describe("submissionSchema", () => {
 
   it("bilinmeyen cevap tipini reddeder", () => {
     const result = submissionSchema.safeParse({
-      elapsedSec: 0,
+      durations: {},
       answers: { "q-1": { type: "essay", value: "..." } },
     });
     expect(result.success).toBe(false);
@@ -25,19 +25,19 @@ describe("submissionSchema", () => {
 
   it("geçersiz soru kimliğini reddeder", () => {
     const result = submissionSchema.safeParse({
-      elapsedSec: 0,
+      durations: {},
       answers: { "../etc": { type: "single_choice", optionId: "a" } },
     });
     expect(result.success).toBe(false);
   });
 
-  it("negatif süreyi reddeder", () => {
-    expect(submissionSchema.safeParse({ elapsedSec: -1, answers: {} }).success).toBe(false);
+  it("negatif soru süresini reddeder", () => {
+    expect(submissionSchema.safeParse({ durations: { "q-1": -1 }, answers: {} }).success).toBe(false);
   });
 
   it("aşırı uzun bellek cevabını reddeder", () => {
     const result = submissionSchema.safeParse({
-      elapsedSec: 0,
+      durations: {},
       answers: { "q-1": { type: "memory_sequence", value: "1".repeat(1000) } },
     });
     expect(result.success).toBe(false);

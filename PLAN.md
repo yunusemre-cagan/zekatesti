@@ -13,7 +13,9 @@ Proje Vercel'e deploy edilecektir.
 | Admin kalıcılığı | **Seçenek A** — Admin paneli yalnızca yerelde (`npm run dev`) yazar. Akış: yerelde soru ekle → `git push` → Vercel otomatik yeniden deploy eder. Production'da admin paneli salt-okunurdur. |
 | Test uzunluğu | Her seferinde **tüm aktif sorular** sorulur. |
 | Açılış ekranı | Tek butonlu ("Teste Başla") sade bir açılış. |
-| Toplam süre | **30 dakika**. |
+| Süre ölçümü | Geri sayım yok. Süre **soru bazında** ölçülür, toplam süre bunların toplamıdır. Görünmeyen 45 dakikalık emniyet sınırı vardır. |
+| Sürenin puana etkisi | **Belirleyici.** Her sorunun puanı hız çarpanıyla çarpılır. |
+| Sekme arka plandayken | Sayaç **işlemeye devam eder**. |
 | Yorum dili | Kod içi açıklamalar Türkçe, değişken/fonksiyon isimleri İngilizce. |
 
 ### Neden Seçenek A?
@@ -87,7 +89,7 @@ Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görse
 
 1. **`/`** — Kısa bir cümle ve "Teste Başla" butonu.
 2. **`/api/test/start`** — Tüm aktif sorular kolaydan zora sıralanarak döner. **Doğru cevaplar istemciye asla gönderilmez.**
-3. **`/test`** — Her ekranda tek soru, ilerleme çubuğu, toplam 30 dakikalık sayaç. Geri dönme ve soru atlama serbest. Durum `useReducer` ile yönetilir ve `sessionStorage`'a yedeklenir (sayfa yenilenince test kaybolmaz). Süre bitince test otomatik gönderilir.
+3. **`/test`** — Her ekranda tek soru, ilerleme çubuğu ve o soruda geçen süreyi gösteren yukarı sayan sayaç. Geri dönme ve soru atlama serbest; bir soruya dönülürse süreler toplanır. Durum `useReducer` ile yönetilir ve `sessionStorage`'a yedeklenir (sayfa yenilenince test kaybolmaz; sayfanın kapalı olduğu süre sayılmaz). Görünmeyen emniyet sınırına ulaşılırsa test otomatik gönderilir.
    - **Bellek sorusu:** Dizi elemanları sırayla gösterilir, ardından gizlenir ve cevap alanı açılır; dizi tekrar görüntülenemez.
    - **Hız görevi:** Soruya özel geri sayım; süre bitince görev otomatik tamamlanır.
 4. **`/api/test/submit`** — Puanlama tamamen sunucuda yapılır.
@@ -97,6 +99,12 @@ Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görse
 oranı, ortalaması 100 ve standart sapması 15 olan dağılıma göre IQ değerine çevrilir, 70–145
 aralığında sınırlanır ve **her zaman tam sayı** olarak gösterilir. Dönüşüm parametreleri
 `lib/config.ts` içinde tutulur.
+
+**Hız çarpanı:** Her sorunun puanı `beklenen süre / harcanan süre` oranıyla çarpılır (en fazla 1,
+en az 0.5). Beklenen süre zorluğa göre belirlenir (kolay 45 sn, orta 75 sn, zor 120 sn) ve soru
+bazında `expectedSec` ile değiştirilebilir. İki istisna: hız görevleri (zaten kendi süre sınırı var)
+ve bellek sorusunda dizinin gösterildiği süre. Bir soruda kaydedilen süre en fazla 5 dakikadır;
+böylece test açık unutulursa tek bir soru tüm sonucu bozmaz.
 
 **Şans düzeltmesi (kısmi puanlı sorular):** Çoklu seçim ve hız görevlerinde yanlış işaretler puan
 düşürür; boş bırakmak ne kazandırır ne kaybettirir. Ceza katsayıları, rastgele veya garantici

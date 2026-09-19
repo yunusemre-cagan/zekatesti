@@ -5,7 +5,8 @@
  * cevapları sunucuya gönderir.
  *
  * İş mantığının kendisi burada değil, saf modüllerdedir (lib/test/session.ts, storage.ts).
- * Bu hook yalnızca onları React yaşam döngüsüne bağlar: veri çekme, kaydetme, yönlendirme.
+ * Bu hook yalnızca onları React yaşam döngüsüne bağlar: veri çekme, kaydetme, yönlendirme
+ * ve "şu an" bilgisinin (Date.now) reducer'a verilmesi.
  *
  * Kullanım: TestRunner bileşeni.
  */
@@ -17,13 +18,13 @@ import {
   getAnsweredCount,
   getCurrentQuestion,
   getProgressPercent,
+  getSubmittableDurations,
   initialTestSessionState,
   testSessionReducer,
   toRestorableProgress,
   type TestSessionState,
 } from "@/lib/test/session";
 import { clearProgress, loadProgress, saveProgress, saveResult } from "@/lib/test/storage";
-import { getElapsedSec } from "@/lib/test/time";
 
 export interface TestSessionController {
   state: TestSessionState;
@@ -60,12 +61,12 @@ export function useTestSession(): TestSessionController {
         dispatch({
           type: "loaded",
           questions: data.questions,
-          durationSec: data.durationSec,
-          startedAtMs: Date.now(),
+          safetyLimitSec: data.safetyLimitSec,
+          nowMs: Date.now(),
         });
         // Kaydedilmiş ilerleme, soru listesi yüklendikten sonra uygulanır (index sınırlanabilsin diye).
         if (saved !== undefined) {
-          dispatch({ type: "restoreProgress", progress: saved });
+          dispatch({ type: "restoreProgress", progress: saved, nowMs: Date.now() });
         }
       } catch (error) {
         if (cancelled) return;
@@ -86,17 +87,18 @@ export function useTestSession(): TestSessionController {
     saveProgress(toRestorableProgress(state));
   }, [state]);
 
-  // 3) Cevapları gönder ve sonuç ekranına geç.
+  // 3) Cevapları ve soru sürelerini gönder, sonuç ekranına geç.
   const submit = useCallback(async () => {
-    dispatch({ type: "submitting" });
+    const nowMs = Date.now();
+    // Ekrandaki soruda işleyen süre de kayda eklenir.
+    const durations = getSubmittableDurations(state, nowMs);
+    dispatch({ type: "submitting", nowMs });
+
     try {
       const response = await fetch("/api/test/submit", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          answers: state.answers,
-          elapsedSec: getElapsedSec(state.startedAtMs, Date.now()),
-        }),
+        body: JSON.stringify({ answers: state.answers, durations }),
       });
 
       if (!response.ok) {
@@ -115,7 +117,7 @@ export function useTestSession(): TestSessionController {
         message: "Cevaplar gönderilemedi. İnternet bağlantınızı kontrol edip tekrar deneyin.",
       });
     }
-  }, [router, state.answers, state.startedAtMs]);
+  }, [router, state]);
 
   // Bileşenin ihtiyaç duyduğu türetilmiş değerler tek seferde hesaplanır.
   const derived = useMemo(
@@ -136,15 +138,15 @@ export function useTestSession(): TestSessionController {
       (questionId: string, answer: Answer) => dispatch({ type: "answer", questionId, answer }),
       [],
     ),
-    goTo: useCallback((index: number) => dispatch({ type: "goto", index }), []),
-    next: useCallback(() => dispatch({ type: "next" }), []),
-    prev: useCallback(() => dispatch({ type: "prev" }), []),
+    goTo: useCallback((index: number) => dispatch({ type: "goto", index, nowMs: Date.now() }), []),
+    next: useCallback(() => dispatch({ type: "next", nowMs: Date.now() }), []),
+    prev: useCallback(() => dispatch({ type: "prev", nowMs: Date.now() }), []),
     startTask: useCallback(
-      (questionId: string) => dispatch({ type: "startTask", questionId, startedAtMs: Date.now() }),
+      (questionId: string) => dispatch({ type: "startTask", questionId, nowMs: Date.now() }),
       [],
     ),
     completeTask: useCallback(
-      (questionId: string) => dispatch({ type: "completeTask", questionId }),
+      (questionId: string) => dispatch({ type: "completeTask", questionId, nowMs: Date.now() }),
       [],
     ),
     submit: useCallback(() => void submit(), [submit]),

@@ -41,7 +41,7 @@ export async function POST(request: Request): Promise<Response> {
     const result: TestSubmitResponse = scoreTest(
       questions,
       parsed.data.answers,
-      parsed.data.elapsedSec,
+      parsed.data.durations,
     );
     return Response.json(result);
   } catch (error) {

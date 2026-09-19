@@ -47,8 +47,15 @@ export const submissionSchema = z.object({
     .refine((answers) => Object.keys(answers).length <= MAX_ANSWERS, {
       message: "Çok fazla cevap gönderildi.",
     }),
-  /** Kullanıcının teste harcadığı süre (saniye). */
-  elapsedSec: z.number().min(0),
+  /**
+   * Soru kimliği → o soruda harcanan süre (saniye).
+   * Toplam süre bu değerlerin toplamıdır; ayrıca her sorunun hız çarpanı buradan hesaplanır.
+   */
+  durations: z
+    .record(questionIdSchema, z.number().min(0))
+    .refine((durations) => Object.keys(durations).length <= MAX_ANSWERS, {
+      message: "Çok fazla süre kaydı gönderildi.",
+    }),
 });
 
 export type Answer = z.infer<typeof answerSchema>;
@@ -57,4 +64,6 @@ export type MultiChoiceAnswer = Extract<Answer, { type: "multi_choice" }>;
 export type MemorySequenceAnswer = Extract<Answer, { type: "memory_sequence" }>;
 export type SpeedTaskAnswer = Extract<Answer, { type: "speed_task" }>;
 export type AnswerMap = Record<string, Answer>;
+/** Soru kimliği → o soruda harcanan süre (saniye). */
+export type DurationMap = Record<string, number>;
 export type Submission = z.infer<typeof submissionSchema>;

@@ -1,8 +1,9 @@
 /**
- * Test başlığı: kaçıncı soruda olunduğu, cevaplanan soru oranı ve kalan süre.
+ * Test başlığı: kaçıncı soruda olunduğu, cevaplanan soru oranı ve o soruda geçen süre.
  *
- * Son bir dakikada sayaç kırmızıya döner; bu, yalnızca görsel bir uyarıdır,
- * süre dolduğunda testi gönderme işini TestRunner yapar.
+ * Testte geri sayım yoktur; onun yerine her sorunun kendi sayacı yukarı sayar. Harcanan süre
+ * puanı etkilediği için (bkz. lib/scoring/speed-factor.ts) kullanıcıya açıkça gösterilir.
+ * Sayaç, sorunun beklenen süresi aşıldığında renk değiştirerek uyarır.
  *
  * Kullanım: TestRunner.
  */
@@ -15,7 +16,8 @@ export interface TestProgressProps {
   totalQuestions: number;
   answeredCount: number;
   progressPercent: number;
-  remainingSec: number;
+  /** Ekrandaki soruda şimdiye kadar geçen süre (saniye). */
+  questionSeconds: number;
 }
 
 export function TestProgress({
@@ -23,10 +25,8 @@ export function TestProgress({
   totalQuestions,
   answeredCount,
   progressPercent,
-  remainingSec,
+  questionSeconds,
 }: TestProgressProps) {
-  const isRunningOut = remainingSec <= 60;
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex items-center justify-between text-sm">
@@ -34,11 +34,8 @@ export function TestProgress({
           Soru {currentIndex + 1} / {totalQuestions}
         </span>
         <span className="text-zinc-500">{answeredCount} soru cevaplandı</span>
-        <span
-          className={`font-mono text-lg ${isRunningOut ? "text-red-600 dark:text-red-400" : ""}`}
-          aria-label="Kalan süre"
-        >
-          {formatDuration(remainingSec)}
+        <span className="font-mono text-lg" aria-label="Bu soruda geçen süre">
+          {formatDuration(questionSeconds)}
         </span>
       </div>
 

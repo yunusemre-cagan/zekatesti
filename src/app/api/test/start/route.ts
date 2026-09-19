@@ -6,7 +6,7 @@
  *
  * Kullanım: Test ekranı (/test) açıldığında bu route'u çağırır.
  */
-import { TEST_DURATION_SEC } from "@/lib/config";
+import { TEST_SAFETY_LIMIT_SEC } from "@/lib/config";
 import { internalError } from "@/lib/api/responses";
 import type { TestStartResponse } from "@/lib/api/contracts";
 import { questionRepository } from "@/lib/questions/repository";
@@ -23,7 +23,7 @@ export async function GET(): Promise<Response> {
   try {
     const questions = getTestQuestions(await questionRepository.getAll());
     const body: TestStartResponse = {
-      durationSec: TEST_DURATION_SEC,
+      safetyLimitSec: TEST_SAFETY_LIMIT_SEC,
       questions: questions.map(toPublicQuestion),
     };
     return Response.json(body);

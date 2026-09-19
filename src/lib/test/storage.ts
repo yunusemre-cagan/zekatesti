@@ -23,12 +23,13 @@ const RESULT_KEY = "iq-test-result";
  * Saklanan verinin sürümü. Şema değişirse artırılır; eski kayıtlar sessizce yok sayılır,
  * böylece güncelleme sonrası kullanıcı bozuk bir oturumla karşılaşmaz.
  */
-const STORAGE_VERSION = 1;
+const STORAGE_VERSION = 2;
 
 const progressSchema = z.object({
   version: z.literal(STORAGE_VERSION),
   index: z.int().min(0),
   answers: z.record(z.string(), answerSchema),
+  durations: z.record(z.string(), z.number()),
   taskStartedAt: z.record(z.string(), z.number()),
   completedTasks: z.record(z.string(), z.literal(true)),
   startedAtMs: z.number(),
@@ -45,6 +46,7 @@ export function loadProgress(): RestorableProgress | undefined {
   return {
     index: parsed.data.index,
     answers: parsed.data.answers,
+    durations: parsed.data.durations,
     taskStartedAt: parsed.data.taskStartedAt,
     completedTasks: parsed.data.completedTasks,
     startedAtMs: parsed.data.startedAtMs,

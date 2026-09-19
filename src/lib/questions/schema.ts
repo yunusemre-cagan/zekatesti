@@ -120,6 +120,11 @@ const baseQuestionShape = {
   difficulty: z.literal([1, 2, 3]),
   prompt: nonEmptyText,
   promptImage: imagePathSchema.optional(),
+  /**
+   * Bu soru için beklenen çözüm süresi (saniye). Girilmezse zorluğa göre varsayılan kullanılır
+   * (bkz. config.ts → QUESTION_TIME). Puanlamada hız çarpanının temelidir.
+   */
+  expectedSec: z.int().min(5).max(600).optional(),
   /** Sonuç ekranında gösterilen çözüm açıklaması. */
   explanation: nonEmptyText.optional(),
   /** Pasif sorular teste dahil edilmez ama veride kalır. */

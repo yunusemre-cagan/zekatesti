@@ -7,7 +7,7 @@
  */
 import { describe, expect, it } from "vitest";
 import type { TestStartResponse, TestSubmitResponse } from "@/lib/api/contracts";
-import { TEST_DURATION_SEC } from "@/lib/config";
+import { TEST_SAFETY_LIMIT_SEC } from "@/lib/config";
 import { questionRepository } from "@/lib/questions/repository";
 import type { Question } from "@/lib/questions/schema";
 import type { AnswerMap } from "@/lib/test/answers";
@@ -48,12 +48,12 @@ function correctAnswerFor(question: Question): AnswerMap[string] {
 }
 
 describe("GET /api/test/start", () => {
-  it("aktif soruları süre bilgisiyle birlikte döner", async () => {
+  it("aktif soruları emniyet sınırıyla birlikte döner", async () => {
     const response = await GET();
     const body = (await response.json()) as TestStartResponse;
 
     expect(response.status).toBe(200);
-    expect(body.durationSec).toBe(TEST_DURATION_SEC);
+    expect(body.safetyLimitSec).toBe(TEST_SAFETY_LIMIT_SEC);
     expect(body.questions.length).toBeGreaterThan(0);
   });
 
@@ -88,7 +88,7 @@ describe("POST /api/test/submit", () => {
   });
 
   it("şemaya uymayan gönderimi 400 ve ayrıntıyla reddeder", async () => {
-    const response = await POST(submitRequest({ elapsedSec: -5, answers: {} }));
+    const response = await POST(submitRequest({ durations: { "q-1": -5 }, answers: {} }));
     const body = (await response.json()) as { error: string; details?: string[] };
 
     expect(response.status).toBe(400);
@@ -96,7 +96,7 @@ describe("POST /api/test/submit", () => {
   });
 
   it("boş gönderimde sıfır puan ve tam sayı IQ döner", async () => {
-    const response = await POST(submitRequest({ elapsedSec: 60, answers: {} }));
+    const response = await POST(submitRequest({ durations: {}, answers: {} }));
     const body = (await response.json()) as TestSubmitResponse;
 
     expect(response.status).toBe(200);
@@ -112,7 +112,7 @@ describe("POST /api/test/submit", () => {
       questions.map((question) => [question.id, correctAnswerFor(question)]),
     );
 
-    const response = await POST(submitRequest({ elapsedSec: 300, answers }));
+    const response = await POST(submitRequest({ durations: {}, answers }));
     const body = (await response.json()) as TestSubmitResponse;
 
     expect(body.scoreRatio).toBe(1);
@@ -121,9 +121,20 @@ describe("POST /api/test/submit", () => {
     expect(body.categories.every((category) => category.ratio === 1)).toBe(true);
   });
 
-  it("süreyi test süresiyle sınırlar", async () => {
-    const response = await POST(submitRequest({ elapsedSec: TEST_DURATION_SEC + 500, answers: {} }));
+  it("gönderilen soru sürelerini toplar ve hızı puana yansıtır", async () => {
+    const questions = (await questionRepository.getAll()).filter((q) => q.active);
+    const answers: AnswerMap = Object.fromEntries(
+      questions.map((question) => [question.id, correctAnswerFor(question)]),
+    );
+    // Her soru, kayıt üst sınırına kadar uzun sürmüş gibi gönderiliyor.
+    const durations = Object.fromEntries(questions.map((question) => [question.id, 600]));
+
+    const response = await POST(submitRequest({ durations, answers }));
     const body = (await response.json()) as TestSubmitResponse;
-    expect(body.elapsedSec).toBe(TEST_DURATION_SEC);
+
+    expect(body.totalSeconds).toBe(questions.length * 300); // üst sınırla kırpılmış
+    expect(body.accuracyRatio).toBe(1);
+    expect(body.scoreRatio).toBeLessThan(1); // yavaşlık puanı düşürdü
+    expect(body.slowQuestionCount).toBeGreaterThan(0);
   });
 });

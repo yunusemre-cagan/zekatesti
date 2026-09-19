@@ -79,8 +79,20 @@ export function ResultView() {
       <section className="grid grid-cols-3 gap-3 text-center">
         <SummaryCard label="Doğru" value={`${result.correctCount} / ${result.totalQuestions}`} />
         <SummaryCard label="Başarı" value={`%${Math.round(result.scoreRatio * 100)}`} />
-        <SummaryCard label="Süre" value={formatDuration(result.elapsedSec)} />
+        <SummaryCard label="Toplam süre" value={formatDuration(result.totalSeconds)} />
       </section>
+
+      {/* Hızın puana etkisi: yalnızca doğruluk puanı ile hız çarpanı sonrası puan farklıysa gösterilir. */}
+      {result.scoreRatio < result.accuracyRatio && (
+        <section className="rounded-lg border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+          <p>
+            Yalnızca doğruluk dikkate alındığında başarınız %
+            {Math.round(result.accuracyRatio * 100)} olurdu. Harcanan süre puana yansıtıldığında
+            %{Math.round(result.scoreRatio * 100)} oldu:{" "}
+            {result.slowQuestionCount} soruda beklenen sürenin üzerine çıkıldı.
+          </p>
+        </section>
+      )}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Kategorilere göre</h2>
@@ -89,7 +101,8 @@ export function ResultView() {
             <div className="flex justify-between text-sm">
               <span>{CATEGORY_LABELS[category.category]}</span>
               <span className="text-zinc-500">
-                %{Math.round(category.ratio * 100)} ({category.questionCount} soru)
+                %{Math.round(category.ratio * 100)} ({category.questionCount} soru ·{" "}
+                {formatDuration(category.seconds)})
               </span>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-zinc-200 dark:bg-zinc-800">
@@ -114,8 +127,18 @@ export function ResultView() {
                 <span className="text-zinc-500">
                   {index + 1}. {CATEGORY_LABELS[question.category]}
                 </span>
-                <span className={STATUS_CLASSES[question.status]}>
-                  {STATUS_LABELS[question.status]}
+                <span className="flex items-center gap-3">
+                  <span
+                    className={
+                      question.speedFactor < 1 ? "text-amber-700 dark:text-amber-400" : "text-zinc-500"
+                    }
+                    title={`Beklenen süre: ${formatDuration(question.expectedSec)}`}
+                  >
+                    {formatDuration(question.seconds)}
+                  </span>
+                  <span className={STATUS_CLASSES[question.status]}>
+                    {STATUS_LABELS[question.status]}
+                  </span>
                 </span>
               </div>
               {question.explanation !== undefined && (

@@ -12,6 +12,7 @@
 import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useCountdown } from "@/hooks/use-countdown";
+import { useCurrentQuestionSeconds } from "@/hooks/use-elapsed-seconds";
 import { useTestSession } from "@/hooks/use-test-session";
 import { QuestionRenderer } from "./QuestionRenderer";
 import { TestProgress } from "./TestProgress";
@@ -21,15 +22,21 @@ export function TestRunner() {
   const { state, currentQuestion } = session;
   const [isFinishConfirmOpen, setFinishConfirmOpen] = useState(false);
 
-  // Süre dolduğunda test, o ana kadar verilen cevaplarla otomatik gönderilir.
-  const handleExpire = useCallback(() => {
+  // Ekrandaki soruda geçen süre (yukarı sayar); puanı etkilediği için kullanıcıya gösterilir.
+  const questionSeconds = useCurrentQuestionSeconds(state);
+
+  /**
+   * Görünmeyen emniyet sınırı: test açık unutulursa, sınıra ulaşıldığında o ana kadarki
+   * cevaplarla otomatik gönderilir. Kalan süre kullanıcıya gösterilmez.
+   */
+  const handleSafetyLimit = useCallback(() => {
     if (state.status === "ready") session.submit();
   }, [session, state.status]);
 
-  const remainingSec = useCountdown({
+  useCountdown({
     startedAtMs: state.startedAtMs === 0 ? undefined : state.startedAtMs,
-    durationSec: state.durationSec,
-    onExpire: handleExpire,
+    durationSec: state.safetyLimitSec,
+    onExpire: handleSafetyLimit,
   });
 
   if (state.status === "loading") {
@@ -64,7 +71,7 @@ export function TestRunner() {
         totalQuestions={state.questions.length}
         answeredCount={session.answeredCount}
         progressPercent={session.progressPercent}
-        remainingSec={remainingSec}
+        questionSeconds={questionSeconds}
       />
 
       <QuestionRenderer

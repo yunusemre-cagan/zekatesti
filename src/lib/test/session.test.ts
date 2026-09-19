@@ -1,10 +1,13 @@
 import { describe, expect, it } from "vitest";
 import { toPublicQuestion } from "@/lib/questions/sanitize";
 import { makeMemory, makeSingleChoice, makeSpeedTask } from "@/lib/testing/fixtures";
+import { QUESTION_TIME } from "@/lib/config";
 import {
   getAnsweredCount,
   getCurrentQuestion,
+  getCurrentQuestionSeconds,
   getProgressPercent,
+  getSubmittableDurations,
   initialTestSessionState,
   isAnswered,
   testSessionReducer,
@@ -23,8 +26,8 @@ function loadedState(overrides: Partial<TestSessionState> = {}): TestSessionStat
   const base = testSessionReducer(initialTestSessionState, {
     type: "loaded",
     questions,
-    durationSec: 1800,
-    startedAtMs: 1_000,
+    safetyLimitSec: 2700,
+    nowMs: 1_000,
   });
   return { ...base, ...overrides };
 }
@@ -34,7 +37,7 @@ describe("testSessionReducer", () => {
     const state = loadedState();
     expect(state.status).toBe("ready");
     expect(state.questions).toHaveLength(3);
-    expect(state.durationSec).toBe(1800);
+    expect(state.safetyLimitSec).toBe(2700);
   });
 
   it("cevabı kaydeder ve öncekini değiştirir", () => {
@@ -54,25 +57,25 @@ describe("testSessionReducer", () => {
 
   it("soru sırasını sınırlar (ilk sorudan öncesine, son sorudan sonrasına gitmez)", () => {
     let state = loadedState();
-    state = testSessionReducer(state, { type: "prev" });
+    state = testSessionReducer(state, { type: "prev", nowMs: 2_000 });
     expect(state.index).toBe(0);
 
-    state = testSessionReducer(state, { type: "goto", index: 99 });
+    state = testSessionReducer(state, { type: "goto", index: 99, nowMs: 3_000 });
     expect(state.index).toBe(2);
 
-    state = testSessionReducer(state, { type: "next" });
+    state = testSessionReducer(state, { type: "next", nowMs: 4_000 });
     expect(state.index).toBe(2);
   });
 
   it("başlatılmış bir görevi yeniden başlatmaz (süre sıfırlanamaz)", () => {
     let state = loadedState();
-    state = testSessionReducer(state, { type: "startTask", questionId: "q-3", startedAtMs: 5_000 });
-    state = testSessionReducer(state, { type: "startTask", questionId: "q-3", startedAtMs: 9_999 });
+    state = testSessionReducer(state, { type: "startTask", questionId: "q-3", nowMs: 5_000 });
+    state = testSessionReducer(state, { type: "startTask", questionId: "q-3", nowMs: 9_999 });
     expect(state.taskStartedAt["q-3"]).toBe(5_000);
   });
 
   it("tamamlanan görevi işaretler", () => {
-    const state = testSessionReducer(loadedState(), { type: "completeTask", questionId: "q-2" });
+    const state = testSessionReducer(loadedState(), { type: "completeTask", questionId: "q-2", nowMs: 6_000 });
     expect(state.completedTasks["q-2"]).toBe(true);
   });
 
@@ -82,10 +85,12 @@ describe("testSessionReducer", () => {
       progress: {
         index: 50,
         answers: { "q-1": { type: "single_choice", optionId: "a" } },
+        durations: { "q-1": 12 },
         taskStartedAt: { "q-3": 42 },
         completedTasks: { "q-2": true },
         startedAtMs: 123,
       },
+      nowMs: 7_000,
     });
 
     expect(state.index).toBe(2);
@@ -96,6 +101,89 @@ describe("testSessionReducer", () => {
   it("hata durumunda mesajı saklar", () => {
     const state = testSessionReducer(loadedState(), { type: "error", message: "Bağlantı yok" });
     expect(state).toMatchObject({ status: "error", errorMessage: "Bağlantı yok" });
+  });
+});
+
+describe("soru bazlı süre ölçümü", () => {
+  const SECOND = 1_000;
+
+  it("soru değiştirildiğinde geçen süreyi o soruya yazar", () => {
+    let state = loadedState(); // yükleme anı: 1_000 ms
+    state = testSessionReducer(state, { type: "next", nowMs: 1_000 + 30 * SECOND });
+
+    expect(state.durations["q-1"]).toBeCloseTo(30);
+    expect(state.durations["q-2"]).toBeUndefined();
+  });
+
+  it("aynı soruya geri dönüldüğünde süreleri toplar", () => {
+    let state = loadedState();
+    state = testSessionReducer(state, { type: "next", nowMs: 1_000 + 10 * SECOND }); // q-1: 10 sn
+    state = testSessionReducer(state, { type: "prev", nowMs: 1_000 + 25 * SECOND }); // q-2: 15 sn
+    state = testSessionReducer(state, { type: "next", nowMs: 1_000 + 30 * SECOND }); // q-1: +5 sn
+
+    expect(state.durations["q-1"]).toBeCloseTo(15);
+    expect(state.durations["q-2"]).toBeCloseTo(15);
+  });
+
+  it("bir soruda kaydedilen süreyi üst sınırda keser", () => {
+    let state = loadedState();
+    state = testSessionReducer(state, { type: "next", nowMs: 1_000 + 3 * 60 * 60 * SECOND });
+    expect(state.durations["q-1"]).toBe(QUESTION_TIME.MAX_RECORDED_SEC);
+  });
+
+  it("görev süresini (dizi gösterimi / hız görevi) soruya yazmaz", () => {
+    // 2. soru (bellek) gösterilirken görev başlatılıp 40 saniye sonra tamamlanıyor.
+    let state = loadedState({ index: 1, questionEnteredAtMs: 1_000 });
+    state = testSessionReducer(state, {
+      type: "startTask",
+      questionId: "q-2",
+      nowMs: 1_000 + 5 * SECOND, // soruyu okumak için geçen 5 saniye kaydedilir
+    });
+    state = testSessionReducer(state, {
+      type: "completeTask",
+      questionId: "q-2",
+      nowMs: 1_000 + 45 * SECOND, // gösterimde geçen 40 saniye kaydedilmez
+    });
+    state = testSessionReducer(state, { type: "prev", nowMs: 1_000 + 55 * SECOND });
+
+    expect(state.durations["q-2"]).toBeCloseTo(15); // 5 sn okuma + 10 sn cevaplama
+  });
+
+  it("gönderimde, ekrandaki soruda işleyen süreyi de kayda ekler", () => {
+    const state = loadedState();
+    const durations = getSubmittableDurations(state, 1_000 + 12 * SECOND);
+    expect(durations["q-1"]).toBeCloseTo(12);
+  });
+
+  it("gönderim için süre çıkarmak durumu değiştirmez", () => {
+    const state = loadedState();
+    getSubmittableDurations(state, 1_000 + 12 * SECOND);
+    expect(state.durations).toEqual({});
+  });
+
+  it("sayfa kapalıyken geçen süreyi saymaz", () => {
+    let state = loadedState();
+    // Kullanıcı 1 saat sonra geri dönüyor; geri yükleme sayacı yeniden başlatır.
+    state = testSessionReducer(state, {
+      type: "restoreProgress",
+      progress: {
+        index: 0,
+        answers: {},
+        durations: { "q-1": 20 },
+        taskStartedAt: {},
+        completedTasks: {},
+        startedAtMs: 1_000,
+      },
+      nowMs: 3_600_000,
+    });
+    state = testSessionReducer(state, { type: "next", nowMs: 3_600_000 + 5 * SECOND });
+
+    expect(state.durations["q-1"]).toBeCloseTo(25); // 20 sn kayıt + 5 sn yeni
+  });
+
+  it("ekrandaki sorunun anlık süresini kayıtla birlikte gösterir", () => {
+    const state = loadedState({ durations: { "q-1": 8 } });
+    expect(getCurrentQuestionSeconds(state, 1_000 + 4 * SECOND)).toBe(12);
   });
 });
 
@@ -139,6 +227,7 @@ describe("seçiciler", () => {
     expect(toRestorableProgress(state)).toEqual({
       index: 1,
       answers: {},
+      durations: {},
       taskStartedAt: {},
       completedTasks: {},
       startedAtMs: 1_000,

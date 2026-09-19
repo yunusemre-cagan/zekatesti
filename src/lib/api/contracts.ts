@@ -11,8 +11,11 @@ import type { TestResult } from "@/lib/scoring/score-test";
 
 /** GET /api/test/start yanıtı. */
 export interface TestStartResponse {
-  /** Testin toplam süresi (saniye). İstemci sayacı bu değerle başlatır. */
-  durationSec: number;
+  /**
+   * Testin görünmeyen emniyet sınırı (saniye). Kullanıcıya gösterilmez; test bu süreyi
+   * aşarsa (ör. sayfa açık unutulmuşsa) o ana kadarki cevaplarla otomatik gönderilir.
+   */
+  safetyLimitSec: number;
   /** Cevapları çıkarılmış sorular, test sırasıyla. */
   questions: PublicQuestion[];
 }
