@@ -29,6 +29,16 @@ export const answerSchema = z.discriminatedUnion("type", [
     optionIds: z.array(optionIdSchema).max(8),
   }),
   z.object({
+    type: z.literal("open_answer"),
+    /** Kullanıcının yazdığı ham cevap; puanlamadan önce normalize edilir. */
+    value: z.string().max(120),
+  }),
+  z.object({
+    type: z.literal("nback_task"),
+    /** Kullanıcının "eşleşme" dediği adımların sıraları (0 tabanlı). */
+    markedIndices: z.array(z.int().min(0).max(100)).max(100),
+  }),
+  z.object({
     type: z.literal("memory_sequence"),
     /** Kullanıcının yazdığı ham metin; puanlamadan önce normalize edilir. */
     value: z.string().max(64),
@@ -61,6 +71,8 @@ export const submissionSchema = z.object({
 export type Answer = z.infer<typeof answerSchema>;
 export type SingleChoiceAnswer = Extract<Answer, { type: "single_choice" }>;
 export type MultiChoiceAnswer = Extract<Answer, { type: "multi_choice" }>;
+export type OpenAnswerAnswer = Extract<Answer, { type: "open_answer" }>;
+export type NbackAnswer = Extract<Answer, { type: "nback_task" }>;
 export type MemorySequenceAnswer = Extract<Answer, { type: "memory_sequence" }>;
 export type SpeedTaskAnswer = Extract<Answer, { type: "speed_task" }>;
 export type AnswerMap = Record<string, Answer>;

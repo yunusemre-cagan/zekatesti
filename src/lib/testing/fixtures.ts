@@ -9,6 +9,8 @@
 import type {
   MemorySequenceQuestion,
   MultiChoiceQuestion,
+  NbackQuestion,
+  OpenAnswerQuestion,
   SingleChoiceQuestion,
   SpeedTaskQuestion,
 } from "@/lib/questions/schema";
@@ -45,6 +47,37 @@ export function makeMultiChoice(overrides: Partial<MultiChoiceQuestion> = {}): M
     ],
     correctOptionIds: ["a", "c"],
     explanation: "A ve C aynı cismin döndürülmüş halidir.",
+    active: true,
+    ...overrides,
+  };
+}
+
+export function makeOpenAnswer(overrides: Partial<OpenAnswerQuestion> = {}): OpenAnswerQuestion {
+  return {
+    id: "acik-1",
+    type: "open_answer",
+    category: "numeric_pattern",
+    difficulty: 3,
+    prompt: "2, 3, 5, 9, ?",
+    answerFormat: "number",
+    acceptedAnswers: ["17"],
+    explanation: "Her terim iki katının bir eksiğidir.",
+    active: true,
+    ...overrides,
+  };
+}
+
+/** İki önceki ile eşleşen üç konum içerir (indeksler: 2, 5, 8). */
+export function makeNback(overrides: Partial<NbackQuestion> = {}): NbackQuestion {
+  return {
+    id: "nback-1",
+    type: "nback_task",
+    category: "working_memory",
+    difficulty: 3,
+    prompt: "İki önceki harfle aynı olduğunda işaretleyin.",
+    n: 2,
+    sequence: ["K", "M", "K", "T", "R", "T", "Z", "B", "Z", "N"],
+    itemDisplayMs: 2000,
     active: true,
     ...overrides,
   };

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110" width="110" height="110">
+<style>
+  .line { stroke: #1a1a1a; fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .solid { fill: #1a1a1a; stroke: none; }
+  .frame { stroke: #b0b0b0; fill: none; stroke-width: 2; }
+  .dashed { stroke: #b0b0b0; fill: none; stroke-width: 2; stroke-dasharray: 6 6; }
+  .label { fill: #1a1a1a; font-family: system-ui, sans-serif; font-size: 34px; text-anchor: middle; }
+  /* Küp yüzleri: dolgu, arkadaki küplerin kenarlarını gizler (derinlik algısı için üç ton). */
+  .face { stroke: #1a1a1a; stroke-width: 2.5; stroke-linejoin: round; }
+  .face-top { fill: #ffffff; }
+  .face-left { fill: #d8d8d8; }
+  .face-right { fill: #efefef; }
+  @media (prefers-color-scheme: dark) {
+    .line { stroke: #ededed; }
+    .solid { fill: #ededed; }
+    .frame, .dashed { stroke: #666; }
+    .label { fill: #ededed; }
+    .face { stroke: #ededed; }
+    .face-top { fill: #3a3a3a; }
+    .face-left { fill: #141414; }
+    .face-right { fill: #262626; }
+  }
+</style>
+<rect class="frame" x="0" y="0" width="110" height="110" rx="6" /><polygon class="line" points="76.9,25.0 86.5,63.7 52.6,84.9 22.0,59.2 37.0,22.2" /><circle class="solid" cx="47" cy="96" r="5" /><circle class="solid" cx="63" cy="96" r="5" />
+</svg>

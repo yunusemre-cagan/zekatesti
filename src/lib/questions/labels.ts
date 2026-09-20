@@ -21,11 +21,14 @@ export const CATEGORY_LABELS: Record<QuestionCategory, string> = {
   odd_one_out: "Farklı Olanı Bul",
   coding_decoding: "Şifre Çözme",
   paper_folding: "Kağıt Katlama",
+  figure_series: "Şekil Serisi",
 };
 
 export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {
   single_choice: "Tek doğru şık",
   multi_choice: "Birden fazla doğru şık",
+  open_answer: "Açık uçlu cevap",
+  nback_task: "n-back görevi",
   memory_sequence: "Bellek dizisi",
   speed_task: "Süreli eşleştirme",
 };

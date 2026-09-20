@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 346 346" width="346" height="346">
+<style>
+  .line { stroke: #1a1a1a; fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .solid { fill: #1a1a1a; stroke: none; }
+  .frame { stroke: #b0b0b0; fill: none; stroke-width: 2; }
+  .dashed { stroke: #b0b0b0; fill: none; stroke-width: 2; stroke-dasharray: 6 6; }
+  .label { fill: #1a1a1a; font-family: system-ui, sans-serif; font-size: 34px; text-anchor: middle; }
+  /* Küp yüzleri: dolgu, arkadaki küplerin kenarlarını gizler (derinlik algısı için üç ton). */
+  .face { stroke: #1a1a1a; stroke-width: 2.5; stroke-linejoin: round; }
+  .face-top { fill: #ffffff; }
+  .face-left { fill: #d8d8d8; }
+  .face-right { fill: #efefef; }
+  @media (prefers-color-scheme: dark) {
+    .line { stroke: #ededed; }
+    .solid { fill: #ededed; }
+    .frame, .dashed { stroke: #666; }
+    .label { fill: #ededed; }
+    .face { stroke: #ededed; }
+    .face-top { fill: #3a3a3a; }
+    .face-left { fill: #141414; }
+    .face-right { fill: #262626; }
+  }
+</style>
+<rect class="frame" x="0" y="0" width="110" height="110" rx="6" /><g transform="translate(0 0)"><polygon class="line" points="55.0,17.0 84.4,68.0 25.6,68.0" /><circle class="solid" cx="55" cy="96" r="5" /></g><rect class="frame" x="118" y="0" width="110" height="110" rx="6" /><g transform="translate(118 0)"><polygon class="line" points="76.9,25.0 66.6,82.9 21.5,45.1" /><circle class="solid" cx="47" cy="96" r="5" /><circle class="solid" cx="63" cy="96" r="5" /></g><rect class="frame" x="236" y="0" width="110" height="110" rx="6" /><g transform="translate(236 0)"><polygon class="line" points="88.5,45.1 43.4,82.9 33.1,25.0" /><circle class="solid" cx="39" cy="96" r="5" /><circle class="solid" cx="55" cy="96" r="5" /><circle class="solid" cx="71" cy="96" r="5" /></g><rect class="frame" x="0" y="118" width="110" height="110" rx="6" /><g transform="translate(0 118)"><polygon class="line" points="55.0,17.0 89.0,51.0 55.0,85.0 21.0,51.0" /><circle class="solid" cx="47" cy="96" r="5" /><circle class="solid" cx="63" cy="96" r="5" /></g><rect class="frame" x="118" y="118" width="110" height="110" rx="6" /><g transform="translate(118 118)"><polygon class="line" points="76.9,25.0 81.0,72.9 33.1,77.0 29.0,29.1" /><circle class="solid" cx="39" cy="96" r="5" /><circle class="solid" cx="55" cy="96" r="5" /><circle class="solid" cx="71" cy="96" r="5" /></g><rect class="frame" x="236" y="118" width="110" height="110" rx="6" /><g transform="translate(236 118)"><polygon class="line" points="88.5,45.1 60.9,84.5 21.5,56.9 49.1,17.5" /><circle class="solid" cx="55" cy="96" r="5" /></g><rect class="frame" x="0" y="236" width="110" height="110" rx="6" /><g transform="translate(0 236)"><polygon class="line" points="55.0,17.0 87.3,40.5 75.0,78.5 35.0,78.5 22.7,40.5" /><circle class="solid" cx="39" cy="96" r="5" /><circle class="solid" cx="55" cy="96" r="5" /><circle class="solid" cx="71" cy="96" r="5" /></g><rect class="frame" x="118" y="236" width="110" height="110" rx="6" /><g transform="translate(118 236)"><polygon class="line" points="76.9,25.0 86.5,63.7 52.6,84.9 22.0,59.2 37.0,22.2" /><circle class="solid" cx="55" cy="96" r="5" /></g><rect class="frame" x="236" y="236" width="110" height="110" rx="6" /><text class="label" x="291" y="303">?</text>
+</svg>

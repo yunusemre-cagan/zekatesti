@@ -15,8 +15,10 @@
  * Kullanım: /api/test/start route'u soruları göndermeden önce bu dönüşümü uygular.
  */
 import type {
+  AnswerFormat,
   MemorySequenceQuestion,
   MultiChoiceQuestion,
+  NbackQuestion,
   Question,
   QuestionCategory,
   SingleChoiceQuestion,
@@ -41,6 +43,19 @@ export interface PublicMultiChoiceQuestion extends PublicQuestionBase {
   options: MultiChoiceQuestion["options"];
 }
 
+export interface PublicOpenAnswerQuestion extends PublicQuestionBase {
+  type: "open_answer";
+  answerFormat: AnswerFormat;
+  placeholder?: string;
+}
+
+export interface PublicNbackQuestion extends PublicQuestionBase {
+  type: "nback_task";
+  n: number;
+  sequence: NbackQuestion["sequence"];
+  itemDisplayMs: number;
+}
+
 export interface PublicMemorySequenceQuestion extends PublicQuestionBase {
   type: "memory_sequence";
   sequence: MemorySequenceQuestion["sequence"];
@@ -60,7 +75,9 @@ export interface PublicSpeedTaskQuestion extends PublicQuestionBase {
 export type PublicQuestion =
   | PublicSingleChoiceQuestion
   | PublicMultiChoiceQuestion
+  | PublicOpenAnswerQuestion
   | PublicMemorySequenceQuestion
+  | PublicNbackQuestion
   | PublicSpeedTaskQuestion;
 
 /** Bir soruyu, doğru cevap ve açıklama içermeyen istemci sürümüne dönüştürür. */
@@ -78,6 +95,25 @@ export function toPublicQuestion(question: Question): PublicQuestion {
 
     case "multi_choice":
       return { ...base, type: "multi_choice", options: question.options };
+
+    case "open_answer":
+      // `acceptedAnswers` bilinçli olarak gönderilmez: cevabın kendisi odur.
+      return {
+        ...base,
+        type: "open_answer",
+        answerFormat: question.answerFormat,
+        ...(question.placeholder !== undefined && { placeholder: question.placeholder }),
+      };
+
+    case "nback_task":
+      // Dizi gösterilmek zorunda olduğu için gönderilir; eşleşme konumları gönderilmez.
+      return {
+        ...base,
+        type: "nback_task",
+        n: question.n,
+        sequence: question.sequence,
+        itemDisplayMs: question.itemDisplayMs,
+      };
 
     case "memory_sequence":
       return {

@@ -207,6 +207,95 @@ function matrixSymmetricDifference(row, col) {
     .join("");
 }
 
+/**
+ * matris-05: Üç kural aynı anda işler ve hepsi birlikte kullanılmadan hücre bulunamaz.
+ *  - Satır, şeklin kenar sayısını belirler (üçgen → kare → beşgen).
+ *  - Sütun, şeklin dönüş açısını belirler (0° → 40° → 80°).
+ *  - Hücre içindeki nokta sayısı (satır + sütun) mod 3 + 1 ile bulunur.
+ */
+function matrixThreeRules(row, col) {
+  const sides = 3 + row;
+  const rotation = -90 + col * 40;
+  const dotCount = ((row + col) % 3) + 1;
+
+  const shape = polygon(MATRIX_CELL / 2, MATRIX_CELL / 2 - 4, 34, sides, rotation);
+  const dots = Array.from({ length: dotCount }, (_, index) =>
+    circle(MATRIX_CELL / 2 + (index - (dotCount - 1) / 2) * 16, MATRIX_CELL - 14, 5, "solid"),
+  ).join("");
+
+  return shape + dots;
+}
+
+/** Serbest kurallı hücre (şıklar için): kenar sayısı, dönüş ve nokta sayısı ayrı ayrı verilir. */
+function matrixThreeRulesCell(sides, rotationDeg, dotCount) {
+  const shape = polygon(MATRIX_CELL / 2, MATRIX_CELL / 2 - 4, 34, sides, -90 + rotationDeg);
+  const dots = Array.from({ length: dotCount }, (_, index) =>
+    circle(MATRIX_CELL / 2 + (index - (dotCount - 1) / 2) * 16, MATRIX_CELL - 14, 5, "solid"),
+  ).join("");
+  return shape + dots;
+}
+
+// ---------------------------------------------------------------------------
+// 1b) Şekil serisi
+// ---------------------------------------------------------------------------
+
+const SERIES_CELL = 104;
+
+/**
+ * Şekil serisindeki tek bir kare: köşelerden birinde dolu nokta ve içinde bir şekil bulunur.
+ *  - Nokta her adımda saat yönünde bir köşe ilerler (4 adımda tur tamamlar).
+ *  - İçteki şekil her adımda daire ↔ üçgen olarak değişir.
+ */
+function seriesCell(step) {
+  const corners = [
+    [24, 24],
+    [SERIES_CELL - 24, 24],
+    [SERIES_CELL - 24, SERIES_CELL - 24],
+    [24, SERIES_CELL - 24],
+  ];
+  const [dotX, dotY] = corners[step % 4];
+  const inner =
+    step % 2 === 0
+      ? circle(SERIES_CELL / 2, SERIES_CELL / 2, 18)
+      : triangle(SERIES_CELL / 2, SERIES_CELL / 2, 38);
+
+  return `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${inner}${circle(dotX, dotY, 7, "solid")}`;
+}
+
+/** Şıklar için tek kare: nokta köşesi ve iç şekil ayrı ayrı verilir. */
+function seriesOptionSvg(cornerIndex, innerIsCircle) {
+  const corners = [
+    [24, 24],
+    [SERIES_CELL - 24, 24],
+    [SERIES_CELL - 24, SERIES_CELL - 24],
+    [24, SERIES_CELL - 24],
+  ];
+  const [dotX, dotY] = corners[cornerIndex % 4];
+  const inner = innerIsCircle
+    ? circle(SERIES_CELL / 2, SERIES_CELL / 2, 18)
+    : triangle(SERIES_CELL / 2, SERIES_CELL / 2, 38);
+
+  const body = `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${inner}${circle(dotX, dotY, 7, "solid")}`;
+  return svgDocument(SERIES_CELL, SERIES_CELL, body);
+}
+
+/** Soruda gösterilen şerit: ilk dört adım ve sonunda soru işareti. */
+function seriesPromptSvg(stepCount) {
+  const gap = 10;
+  const width = (SERIES_CELL + gap) * (stepCount + 1) - gap;
+  let body = "";
+
+  for (let step = 0; step < stepCount; step += 1) {
+    body += group(`translate(${step * (SERIES_CELL + gap)} 0)`, seriesCell(step));
+  }
+
+  const lastX = stepCount * (SERIES_CELL + gap);
+  body += `<rect class="frame" x="${lastX + 2}" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />`;
+  body += `<text class="label" x="${lastX + SERIES_CELL / 2}" y="${SERIES_CELL / 2 + 12}">?</text>`;
+
+  return svgDocument(width, SERIES_CELL, body);
+}
+
 // ---------------------------------------------------------------------------
 // 2) Uzamsal düşünme soruları
 // ---------------------------------------------------------------------------
@@ -419,6 +508,28 @@ function buildFiles() {
   add("matris-04", "b.svg", cellOptionSvg(matrixSymmetricDifference(2, 0))); // ilk hücre
   add("matris-04", "c.svg", cellOptionSvg(matrixSymmetricDifference(0, 2))); // başka satırın cevabı
   add("matris-04", "d.svg", cellOptionSvg(matrixSymmetricDifference(1, 1))); // ilgisiz
+
+  /**
+   * matris-05: üç kural birlikte işler (kenar sayısı, dönüş, nokta sayısı).
+   * Aranan hücre (3. satır, 3. sütun): beşgen, 80° dönüş, ((2+2) mod 3) + 1 = 2 nokta.
+   */
+  add("matris-05", "matris.svg", matrixSvg((row, col) =>
+    row === 2 && col === 2 ? undefined : matrixThreeRules(row, col),
+  ));
+  add("matris-05", "a.svg", cellOptionSvg(matrixThreeRulesCell(5, 80, 3))); // nokta sayısı yanlış
+  add("matris-05", "b.svg", cellOptionSvg(matrixThreeRulesCell(5, 80, 2))); // doğru
+  add("matris-05", "c.svg", cellOptionSvg(matrixThreeRulesCell(4, 80, 2))); // kenar sayısı yanlış
+  add("matris-05", "d.svg", cellOptionSvg(matrixThreeRulesCell(5, 40, 2))); // dönüş yanlış
+
+  /**
+   * seri-01: dört adımlık şekil serisi; beşinci adım aranır.
+   * 5. adım (index 4): nokta 4 mod 4 = 0 → sol üst köşe; iç şekil 4 çift → daire.
+   */
+  add("seri-01", "seri.svg", seriesPromptSvg(4));
+  add("seri-01", "a.svg", seriesOptionSvg(0, true)); // doğru
+  add("seri-01", "b.svg", seriesOptionSvg(1, true)); // nokta bir köşe ileride
+  add("seri-01", "c.svg", seriesOptionSvg(0, false)); // iç şekil yanlış
+  add("seri-01", "d.svg", seriesOptionSvg(3, true)); // nokta bir köşe geride
 
   // --- Uzamsal düşünme ---
   // uzamsal-01: bayrak figürünün 90° döndürülmüş hali (tek doğru).

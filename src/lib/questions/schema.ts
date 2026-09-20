@@ -41,14 +41,20 @@ export const QUESTION_CATEGORIES = [
   "odd_one_out",
   "coding_decoding",
   "paper_folding",
+  "figure_series",
 ] as const;
 
 export const QUESTION_TYPES = [
   "single_choice",
   "multi_choice",
+  "open_answer",
   "memory_sequence",
+  "nback_task",
   "speed_task",
 ] as const;
+
+/** Açık uçlu cevabın nasıl karşılaştırılacağı: sayı olarak mı, metin olarak mı. */
+export const ANSWER_FORMATS = ["number", "text"] as const;
 
 /** Bellek sorusunda kullanıcıdan beklenen dönüşüm. */
 export const MEMORY_TRANSFORMS = ["same", "reverse", "sorted"] as const;
@@ -228,11 +234,62 @@ export const speedTaskQuestionSchema = z
     { message: "Her maddenin doğru şıkkı, ortak şıklar arasında bulunmalı.", path: ["items"] },
   );
 
+/**
+ * Açık uçlu soru: şık yoktur, kullanıcı cevabı kendisi yazar.
+ *
+ * Tahmin ihtimalini ortadan kaldırdığı için aynı içerik şıklı haline göre belirgin şekilde
+ * zordur. Birden fazla kabul edilen cevap yazılabilir (ör. "33" ve "otuz üç"); karşılaştırma
+ * `answerFormat` alanına göre normalize edilerek yapılır (bkz. scoring/check-answer.ts).
+ */
+export const openAnswerQuestionSchema = z.object({
+  ...identityShape,
+  type: z.literal("open_answer"),
+  ...baseQuestionShape,
+  answerFormat: z.enum(ANSWER_FORMATS),
+  /** Doğru sayılan cevaplar. En az biri girilmelidir. */
+  acceptedAnswers: z
+    .array(nonEmptyText)
+    .min(1, "En az bir kabul edilen cevap girilmeli.")
+    .max(5, "En fazla 5 kabul edilen cevap girilebilir."),
+  /** Cevap kutusunda gösterilecek ipucu metni (ör. "Örn: 42"). */
+  placeholder: nonEmptyText.optional(),
+});
+
+/**
+ * n-back görevi: ekranda tek tek akan öğelerde, "şu anki öğe n adım öncekiyle aynı mı?"
+ * sorusu her adımda yanıtlanır.
+ *
+ * Dizi ezberlemeye değil, sürekli güncellenen bir belleği tutmaya dayandığı için çalışma
+ * belleğini dizi sorularından daha zorlu ölçer. Doğru cevaplar (eşleşme konumları) veride
+ * tutulmaz; diziden hesaplanır.
+ */
+export const nbackQuestionSchema = z
+  .object({
+    ...identityShape,
+    type: z.literal("nback_task"),
+    ...baseQuestionShape,
+    /** Kaç adım öncesiyle karşılaştırılacağı (2 = "iki önceki"). */
+    n: z.int().min(1).max(3),
+    /** Akacak öğeler; tek karakterlik harf veya rakam. */
+    sequence: z
+      .array(z.string().regex(/^[0-9A-Z]$/, "Öğeler tek rakam veya büyük harf olmalı."))
+      .min(8, "Dizi en az 8 öğe içermeli.")
+      .max(40, "Dizi en fazla 40 öğe içerebilir."),
+    /** Her öğenin ekranda kalma süresi (ms). */
+    itemDisplayMs: z.int().min(800).max(4000),
+  })
+  .refine((q) => countNbackTargets(q.sequence, q.n) >= 2, {
+    message: "Dizi en az iki eşleşme içermeli; aksi halde görev ölçüm yapamaz.",
+    path: ["sequence"],
+  });
+
 /** Herhangi bir soru — "type" alanına göre doğru şemaya yönlendirilir. */
 export const questionSchema = z.discriminatedUnion("type", [
   singleChoiceQuestionSchema,
   multiChoiceQuestionSchema,
+  openAnswerQuestionSchema,
   memorySequenceQuestionSchema,
+  nbackQuestionSchema,
   speedTaskQuestionSchema,
 ]);
 
@@ -256,7 +313,11 @@ export type Media = z.infer<typeof mediaSchema>;
 export type Option = z.infer<typeof optionSchema>;
 export type SpeedTaskItem = z.infer<typeof speedTaskItemSchema>;
 
+export type AnswerFormat = (typeof ANSWER_FORMATS)[number];
+
 export type SingleChoiceQuestion = z.infer<typeof singleChoiceQuestionSchema>;
+export type OpenAnswerQuestion = z.infer<typeof openAnswerQuestionSchema>;
+export type NbackQuestion = z.infer<typeof nbackQuestionSchema>;
 export type MultiChoiceQuestion = z.infer<typeof multiChoiceQuestionSchema>;
 export type MemorySequenceQuestion = z.infer<typeof memorySequenceQuestionSchema>;
 export type SpeedTaskQuestion = z.infer<typeof speedTaskQuestionSchema>;
@@ -268,4 +329,9 @@ export type Question = z.infer<typeof questionSchema>;
 
 function hasUniqueValues(values: readonly string[]): boolean {
   return new Set(values).size === values.length;
+}
+
+/** n-back dizisindeki eşleşme (hedef) sayısı: i. öğe, (i − n). öğeyle aynıysa hedeftir. */
+function countNbackTargets(sequence: readonly string[], n: number): number {
+  return sequence.filter((item, index) => index >= n && item === sequence[index - n]).length;
 }

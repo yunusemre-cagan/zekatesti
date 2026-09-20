@@ -24,9 +24,11 @@ import {
   QUESTION_TYPE_LABELS,
 } from "@/lib/questions/labels";
 import {
+  ANSWER_FORMATS,
   MEMORY_TRANSFORMS,
   QUESTION_CATEGORIES,
   QUESTION_TYPES,
+  type AnswerFormat,
   type MemoryTransform,
   type QuestionCategory,
   type QuestionType,
@@ -108,7 +110,9 @@ export function QuestionForm({ initialDraft, mode }: QuestionFormProps) {
     }
   }
 
-  const showsOptions = draft.type !== "memory_sequence";
+  // Şık listesi yalnızca şıkla cevaplanan tiplerde gösterilir.
+  const showsOptions =
+    draft.type === "single_choice" || draft.type === "multi_choice" || draft.type === "speed_task";
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
@@ -324,6 +328,82 @@ export function QuestionForm({ initialDraft, mode }: QuestionFormProps) {
                 </option>
               ))}
             </select>
+          </Field>
+        </section>
+      )}
+
+      {draft.type === "open_answer" && (
+        <section className="flex flex-col gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <Field label="Cevap biçimi">
+              <select
+                value={draft.answerFormat}
+                onChange={(event) => update("answerFormat", event.target.value as AnswerFormat)}
+                className={inputClass}
+              >
+                {ANSWER_FORMATS.map((format) => (
+                  <option key={format} value={format}>
+                    {format === "number" ? "Sayı" : "Metin"}
+                  </option>
+                ))}
+              </select>
+            </Field>
+            <Field label="Cevap kutusu ipucu (isteğe bağlı)">
+              <input
+                type="text"
+                value={draft.placeholder}
+                onChange={(event) => update("placeholder", event.target.value)}
+                placeholder="Örn: 42"
+                className={inputClass}
+              />
+            </Field>
+          </div>
+          <Field label="Kabul edilen cevaplar (her satıra bir cevap)">
+            <textarea
+              value={draft.acceptedAnswers}
+              onChange={(event) => update("acceptedAnswers", event.target.value)}
+              rows={3}
+              placeholder={"33\notuz üç"}
+              className={inputClass}
+            />
+          </Field>
+          <p className="text-sm text-zinc-500">
+            Sayı biçiminde boşluk, binlik ayracı ve ondalık virgül farkı göz ardı edilir; metin
+            biçiminde büyük-küçük harf farkı göz ardı edilir.
+          </p>
+        </section>
+      )}
+
+      {draft.type === "nback_task" && (
+        <section className="grid gap-4 sm:grid-cols-3">
+          <Field label="n (kaç önceki ile karşılaştırılacak)">
+            <input
+              type="number"
+              min={1}
+              max={3}
+              value={draft.nbackN}
+              onChange={(event) => update("nbackN", event.target.value)}
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Akacak dizi (harf/rakam, boşlukla ayırın)">
+            <input
+              type="text"
+              value={draft.nbackSequence}
+              onChange={(event) => update("nbackSequence", event.target.value)}
+              placeholder="K M K T R T Z K"
+              className={inputClass}
+            />
+          </Field>
+          <Field label="Öğe gösterim süresi (ms)">
+            <input
+              type="number"
+              min={800}
+              max={4000}
+              value={draft.nbackItemDisplayMs}
+              onChange={(event) => update("nbackItemDisplayMs", event.target.value)}
+              className={inputClass}
+            />
           </Field>
         </section>
       )}

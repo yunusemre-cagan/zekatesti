@@ -52,10 +52,11 @@ Her soru **0–1 arası doğruluk puanı** alır ve bu puan iki katsayıyla çar
 - **Zorluk ağırlığı:** Kolay 1, orta 2, zor 3. Zor sorular sonuca daha çok etki eder.
 - **Hız çarpanı:** `beklenen süre / harcanan süre`, en fazla 1, en az 0.5. Beklenen süre
   zorluğa göre belirlenir (45 / 75 / 120 saniye) ve soru bazında `expectedSec` ile
-  değiştirilebilir. Hız görevlerinde ve bellek sorusunun gösterim süresinde uygulanmaz.
+  değiştirilebilir. Kendi temposu olan görevlerde (hız görevi, n-back) ve bellek sorusunun
+  gösterim süresinde uygulanmaz.
   Bir soruda en fazla 5 dakika kaydedilir.
 
-**Şans düzeltmesi:** Çoklu seçim ve hız görevlerinde yanlış işaretler puan düşürür; boş
+**Şans düzeltmesi:** Çoklu seçim, hız görevi ve n-back'te yanlış işaretler puan düşürür; boş
 bırakmak nötrdür. Katsayılar, rastgele veya "hepsini işaretle" taktiğiyle beklenen puanın
 sıfır olacağı şekilde seçilmiştir. Soru puanı hiçbir zaman negatife düşmez.
 
@@ -113,7 +114,7 @@ Kendi görselinizi admin panelinden de yükleyebilirsiniz (SVG, PNG, JPG, WEBP, 
 | Alan | Açıklama |
 |---|---|
 | `id` | Küçük harf, rakam ve tire (ör. `matris-01`). Görsel klasörünün adı da budur. |
-| `type` | `single_choice`, `multi_choice`, `memory_sequence`, `speed_task` |
+| `type` | `single_choice`, `multi_choice`, `open_answer`, `memory_sequence`, `nback_task`, `speed_task` |
 | `category` | Sonuç ekranındaki kategori dökümünü belirler |
 | `difficulty` | 1 (kolay), 2 (orta), 3 (zor) |
 | `prompt` | Soru metni |
@@ -128,6 +129,8 @@ Kendi görselinizi admin panelinden de yükleyebilirsiniz (SVG, PNG, JPG, WEBP, 
 |---|---|
 | `single_choice` | `options[]`, `correctOptionId` |
 | `multi_choice` | `options[]`, `correctOptionIds[]` |
+| `open_answer` | `answerFormat` (`number`/`text`), `acceptedAnswers[]`, isteğe bağlı `placeholder` |
+| `nback_task` | `n`, `sequence[]`, `itemDisplayMs` |
 | `memory_sequence` | `sequence[]` (tek karakterli öğeler), `itemDisplayMs`, `transform` (`same`/`reverse`/`sorted`) |
 | `speed_task` | `timeLimitSec`, `options[]` (tüm maddeler için ortak), `items[]`, isteğe bağlı `legend[]` |
 

@@ -4,6 +4,8 @@
  * Her soru 0 ile 1 arasında bir puan alır:
  *  - single_choice   : Doğru şık → 1, aksi → 0
  *  - multi_choice    : Kısmi puanlı, şans düzeltmeli (aşağıya bakınız)
+ *  - open_answer     : Normalize edilmiş cevap, kabul edilenlerden biriyle aynı → 1, aksi → 0
+ *  - nback_task      : Kısmi puanlı, şans düzeltmeli (yanlış "eşleşme" işareti puan düşürür)
  *  - memory_sequence : Normalize edilmiş cevap, beklenen diziyle aynı → 1, aksi → 0
  *  - speed_task      : Kısmi puanlı, şans düzeltmeli (aşağıya bakınız)
  *
@@ -17,8 +19,11 @@
  * Kullanım: score-test.ts her soru için bu modülü çağırır. Doğrudan API veya arayüz tarafından çağrılmaz.
  */
 import type {
+  AnswerFormat,
   MemorySequenceQuestion,
   MultiChoiceQuestion,
+  NbackQuestion,
+  OpenAnswerQuestion,
   Question,
   SingleChoiceQuestion,
   SpeedTaskQuestion,
@@ -27,6 +32,8 @@ import type {
   Answer,
   MemorySequenceAnswer,
   MultiChoiceAnswer,
+  NbackAnswer,
+  OpenAnswerAnswer,
   SingleChoiceAnswer,
   SpeedTaskAnswer,
 } from "@/lib/test/answers";
@@ -63,8 +70,12 @@ export function evaluateAnswer(question: Question, answer: Answer | undefined): 
       return answer.type === "single_choice" ? toEvaluation(scoreSingleChoice(question, answer)) : UNANSWERED;
     case "multi_choice":
       return answer.type === "multi_choice" ? toEvaluation(scoreMultiChoice(question, answer)) : UNANSWERED;
+    case "open_answer":
+      return answer.type === "open_answer" ? toEvaluation(scoreOpenAnswer(question, answer)) : UNANSWERED;
     case "memory_sequence":
       return answer.type === "memory_sequence" ? toEvaluation(scoreMemory(question, answer)) : UNANSWERED;
+    case "nback_task":
+      return answer.type === "nback_task" ? toEvaluation(scoreNback(question, answer)) : UNANSWERED;
     case "speed_task":
       return answer.type === "speed_task" ? toEvaluation(scoreSpeedTask(question, answer)) : UNANSWERED;
   }
@@ -126,6 +137,71 @@ function scoreMultiChoice(question: MultiChoiceQuestion, answer: MultiChoiceAnsw
   // Tüm şıkların doğru olduğu (yanlış şıkkı bulunmayan) soruda ceza uygulanamaz.
   const penaltyPerWrong = incorrectOptionCount > 0 ? correctIds.size / incorrectOptionCount : 0;
   return clampScore((correctCount - wrongCount * penaltyPerWrong) / correctIds.size);
+}
+
+/**
+ * Açık uçlu cevabı karşılaştırmaya hazırlar.
+ *  - number: boşluklar ve binlik ayraçları atılır, ondalık virgül noktaya çevrilir ve
+ *    sayısal değer karşılaştırılır (böylece "1.000", "1000" ve "1000,0" aynı sayılır).
+ *  - text: baştaki/sondaki boşluklar atılır, aradaki boşluklar teke indirilir ve metin
+ *    Türkçe kurallarına göre büyütülür (ör. "istanbul" → "İSTANBUL").
+ */
+export function normalizeOpenAnswer(value: string, format: AnswerFormat): string {
+  if (format === "number") {
+    const cleaned = value
+      .replace(/\s+/g, "")
+      .replace(/\.(?=\d{3}\b)/g, "")
+      .replace(",", ".");
+    const parsed = Number(cleaned);
+    return Number.isFinite(parsed) && cleaned !== "" ? String(parsed) : cleaned;
+  }
+  return value.trim().replace(/\s+/g, " ").toLocaleUpperCase("tr");
+}
+
+function scoreOpenAnswer(question: OpenAnswerQuestion, answer: OpenAnswerAnswer): number {
+  const given = normalizeOpenAnswer(answer.value, question.answerFormat);
+  if (given === "") return 0;
+  return question.acceptedAnswers.some(
+    (accepted) => normalizeOpenAnswer(accepted, question.answerFormat) === given,
+  )
+    ? 1
+    : 0;
+}
+
+/**
+ * n-back görevinde eşleşme (hedef) konumları: i. öğe, (i − n). öğeyle aynıysa hedeftir.
+ * Doğru cevaplar veride tutulmaz, dizinin kendisinden hesaplanır.
+ */
+export function getNbackTargets(question: NbackQuestion): number[] {
+  return question.sequence.flatMap((item, index) =>
+    index >= question.n && item === question.sequence[index - question.n] ? [index] : [],
+  );
+}
+
+/**
+ * n-back: (doğru işaretler − yanlış işaretler) / toplam eşleşme sayısı.
+ *
+ * Her adımda "eşleşme var" demek serbest olduğu için, yanlış işaretler doğruları götürür;
+ * böylece sürekli butona basan kullanıcı puan toplayamaz. Kaçırılan eşleşme ceza getirmez,
+ * yalnızca puan kazandırmaz.
+ */
+function scoreNback(question: NbackQuestion, answer: NbackAnswer): number {
+  const targets = new Set(getNbackTargets(question));
+  if (targets.size === 0) return 0;
+
+  // Dizi dışındaki ve tekrar eden işaretler yok sayılır.
+  const marked = new Set(
+    answer.markedIndices.filter((index) => index >= 0 && index < question.sequence.length),
+  );
+
+  let hits = 0;
+  let falseAlarms = 0;
+  for (const index of marked) {
+    if (targets.has(index)) hits += 1;
+    else falseAlarms += 1;
+  }
+
+  return clampScore((hits - falseAlarms) / targets.size);
 }
 
 function scoreMemory(question: MemorySequenceQuestion, answer: MemorySequenceAnswer): number {

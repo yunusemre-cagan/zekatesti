@@ -39,6 +39,15 @@ function correctAnswerFor(question: Question): AnswerMap[string] {
             : question.sequence;
       return { type: "memory_sequence", value: sequence.join("") };
     }
+    case "open_answer":
+      return { type: "open_answer", value: question.acceptedAnswers[0] ?? "" };
+    case "nback_task": {
+      // Eşleşme konumları diziden hesaplanır (sunucunun yaptığının aynısı).
+      const targets = question.sequence.flatMap((item, index) =>
+        index >= question.n && item === question.sequence[index - question.n] ? [index] : [],
+      );
+      return { type: "nback_task", markedIndices: targets };
+    }
     case "speed_task":
       return {
         type: "speed_task",

@@ -7,8 +7,8 @@
  * çözen yarı puan alır.
  *
  * İki istisna vardır:
- *  - Hız görevleri (speed_task): Kendi süre sınırları içinde zaten hızı ölçtükleri için
- *    ikinci kez cezalandırılmazlar.
+ *  - Kendi temposu olan görevler (speed_task, nback_task): Öğeler sabit hızla aktığı veya
+ *    süre sınırı bulunduğu için hız zaten görevin içinde ölçülür; ikinci kez cezalandırılmaz.
  *  - Süresi ölçülmemiş sorular: Çarpan 1 kabul edilir (cevap yoksa puan zaten 0'dır).
  *
  * Kullanım: score-test.ts her sorunun puanını bu çarpanla çarpar.
@@ -35,8 +35,8 @@ export function capRecordedSec(seconds: number): number {
  * @param seconds Soruda harcanan süre. `undefined` ise ölçüm yok sayılır ve 1 döner.
  */
 export function getSpeedFactor(question: Question, seconds: number | undefined): number {
-  // Hız görevleri kendi süre sınırıyla ölçülür; ayrıca çarpan uygulanmaz.
-  if (question.type === "speed_task") return 1;
+  // Kendi temposu olan görevlerde çarpan uygulanmaz (çifte ceza olmaması için).
+  if (question.type === "speed_task" || question.type === "nback_task") return 1;
   if (seconds === undefined) return 1;
 
   const spent = capRecordedSec(seconds);

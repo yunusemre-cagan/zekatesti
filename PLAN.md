@@ -79,6 +79,8 @@ Tipe özgü alanlar **discriminated union** ile modellenir:
 | `single_choice` (sayısal örüntü, matris, mantık, analoji, problem çözme, ek tipler) | `options: {id, text?, image?}[]`, `correctOptionId` | Seçilen şık == doğru şık |
 | `multi_choice` (uzamsal — "hangileri aynı cisim?") | `options`, `correctOptionIds[]` | Kısmi puan; yanlış işaret puan düşürür (şans düzeltmesi) |
 | `memory_sequence` (çalışma belleği) | `sequence[]` (tek karakterlik öğeler), `itemDisplayMs`, `transform: 'reverse' \| 'same' \| 'sorted'` | Beklenen cevap sunucuda diziden hesaplanır |
+| `open_answer` (açık uçlu) | `answerFormat`, `acceptedAnswers[]` | Normalize edilmiş cevap kabul edilenlerden biriyle aynı mı |
+| `nback_task` (çalışma belleği) | `n`, `sequence[]`, `itemDisplayMs` | Kısmi puan; doğru işaretler − yanlış işaretler |
 | `speed_task` (işlemleme hızı) | `timeLimitSec`, `legend?` (sembol→rakam anahtarı), `options[]` (tüm maddeler için ortak), `items[]` (`stimulus` + `correctOptionId`) | Kısmi puan; yanlış madde puan düşürür (şans düzeltmesi) |
 
 Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görsel eklenebilir.
@@ -124,7 +126,7 @@ Soru puanı hiçbir zaman negatife düşmez.
 
 ---
 
-## 6. Sorular (son aşamada — 34 soru)
+## 6. Sorular (42 soru)
 
 | # | Kategori | Adet | Not |
 |---|---|---|---|
@@ -137,6 +139,7 @@ Soru puanı hiçbir zaman negatife düşmez.
 | 7 | Problem çözme | 3 | Birden fazla kuralın eşzamanlı uygulandığı özgün problemler |
 | 8 | İşlemleme hızı | 2 | Sembol-rakam kodlama, benzer şekli bulma (8–10 madde, süreli) |
 | 9 | **Ek öneriler** | 6 | Farklı olanı bul (2), Şifre çözme (2), Kağıt katlama (2) |
+| 10 | **Zorluk artışı (sonradan eklendi)** | 8 | Açık uçlu sorular (3), n-back (1), şövalye-yalancı mantığı (1), üç kurallı matris (1), şekil serisi (1), ızgara bulmacası (1) |
 
 Her soruya çözüm açıklaması (`explanation`) yazılacaktır.
 

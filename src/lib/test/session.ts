@@ -222,8 +222,14 @@ export function isAnswered(answer: Answer | undefined): boolean {
       return answer.optionId !== "";
     case "multi_choice":
       return answer.optionIds.length > 0;
+    case "open_answer":
+      return answer.value.trim() !== "";
     case "memory_sequence":
       return answer.value.trim() !== "";
+    case "nback_task":
+      // n-back görevinde hiç işaret koymamak da geçerli bir cevaptır; görev tamamlandıysa
+      // cevaplanmış sayılır. Tamamlanma bilgisi completedTasks içinde tutulur.
+      return true;
     case "speed_task":
       return Object.keys(answer.responses).length > 0;
   }

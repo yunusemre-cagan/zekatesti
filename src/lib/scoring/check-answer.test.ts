@@ -1,6 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { makeMemory, makeMultiChoice, makeSingleChoice, makeSpeedTask } from "@/lib/testing/fixtures";
-import { evaluateAnswer, getExpectedMemoryAnswer, normalizeMemoryInput } from "./check-answer";
+import {
+  makeMemory,
+  makeMultiChoice,
+  makeNback,
+  makeOpenAnswer,
+  makeSingleChoice,
+  makeSpeedTask,
+} from "@/lib/testing/fixtures";
+import {
+  evaluateAnswer,
+  getExpectedMemoryAnswer,
+  getNbackTargets,
+  normalizeMemoryInput,
+  normalizeOpenAnswer,
+} from "./check-answer";
 
 describe("evaluateAnswer", () => {
   it("cevap yoksa 'unanswered' döner", () => {
@@ -64,6 +77,89 @@ describe("evaluateAnswer", () => {
 
     it("soruda bulunmayan şık kimliklerini yok sayar", () => {
       const result = evaluateAnswer(question, { type: "multi_choice", optionIds: ["a", "c", "z"] });
+      expect(result.status).toBe("correct");
+    });
+  });
+
+  describe("open_answer", () => {
+    const question = makeOpenAnswer(); // kabul edilen cevap: "17"
+
+    it("doğru cevaba tam puan verir", () => {
+      expect(evaluateAnswer(question, { type: "open_answer", value: "17" })).toEqual({
+        score: 1,
+        status: "correct",
+      });
+    });
+
+    it("sayısal cevapta boşluk ve biçim farklarını göz ardı eder", () => {
+      for (const value of [" 17 ", "17,0", "17.0", "+17"]) {
+        expect(evaluateAnswer(question, { type: "open_answer", value }).status).toBe("correct");
+      }
+    });
+
+    it("binlik ayracını yok sayar", () => {
+      const big = makeOpenAnswer({ acceptedAnswers: ["1000"] });
+      expect(evaluateAnswer(big, { type: "open_answer", value: "1.000" }).status).toBe("correct");
+    });
+
+    it("yanlış cevaba puan vermez", () => {
+      expect(evaluateAnswer(question, { type: "open_answer", value: "18" })).toEqual({
+        score: 0,
+        status: "wrong",
+      });
+    });
+
+    it("boş cevabı yanlış sayar", () => {
+      expect(evaluateAnswer(question, { type: "open_answer", value: "   " }).score).toBe(0);
+    });
+
+    it("metin biçiminde büyük-küçük harf farkını göz ardı eder", () => {
+      const text = makeOpenAnswer({ answerFormat: "text", acceptedAnswers: ["TUMRA"] });
+      expect(evaluateAnswer(text, { type: "open_answer", value: "tumra" }).status).toBe("correct");
+    });
+
+    it("birden fazla kabul edilen cevabı destekler", () => {
+      const multi = makeOpenAnswer({ answerFormat: "text", acceptedAnswers: ["OTUZ ÜÇ", "33"] });
+      expect(evaluateAnswer(multi, { type: "open_answer", value: "otuz üç" }).status).toBe("correct");
+      expect(evaluateAnswer(multi, { type: "open_answer", value: "33" }).status).toBe("correct");
+    });
+  });
+
+  describe("nback_task", () => {
+    // Fixture dizisinde eşleşme konumları: 2, 5, 8
+    const question = makeNback();
+
+    it("tüm eşleşmeler doğru işaretlenirse tam puan verir", () => {
+      const result = evaluateAnswer(question, { type: "nback_task", markedIndices: [2, 5, 8] });
+      expect(result).toEqual({ score: 1, status: "correct" });
+    });
+
+    it("eksik işaretlemede kısmi puan verir", () => {
+      const result = evaluateAnswer(question, { type: "nback_task", markedIndices: [2, 5] });
+      expect(result).toEqual({ score: 2 / 3, status: "partial" });
+    });
+
+    it("yanlış işaret, doğru işaretin puanını götürür", () => {
+      const result = evaluateAnswer(question, { type: "nback_task", markedIndices: [2, 5, 3] });
+      expect(result.score).toBeCloseTo(1 / 3);
+    });
+
+    it("her adımda işaretleyen kullanıcıya puan vermez", () => {
+      const hepsi = question.sequence.map((_, index) => index);
+      const result = evaluateAnswer(question, { type: "nback_task", markedIndices: hepsi });
+      expect(result).toEqual({ score: 0, status: "wrong" });
+    });
+
+    it("hiç işaretlemeyene puan vermez ama ceza da uygulamaz", () => {
+      const result = evaluateAnswer(question, { type: "nback_task", markedIndices: [] });
+      expect(result).toEqual({ score: 0, status: "wrong" });
+    });
+
+    it("dizi dışındaki ve tekrar eden işaretleri yok sayar", () => {
+      const result = evaluateAnswer(question, {
+        type: "nback_task",
+        markedIndices: [2, 2, 5, 8, 999],
+      });
       expect(result.status).toBe("correct");
     });
   });
@@ -157,6 +253,34 @@ describe("getExpectedMemoryAnswer", () => {
     const question = makeMemory({ sequence: [...sequence], transform: "reverse" });
     getExpectedMemoryAnswer(question);
     expect(question.sequence).toEqual(sequence);
+  });
+});
+
+describe("getNbackTargets", () => {
+  it("n adım öncesiyle eşleşen konumları bulur", () => {
+    expect(getNbackTargets(makeNback())).toEqual([2, 5, 8]);
+  });
+
+  it("n değiştiğinde farklı konumlar çıkar", () => {
+    const question = makeNback({ n: 1, sequence: ["A", "A", "B", "C", "C", "C"] });
+    expect(getNbackTargets(question)).toEqual([1, 4, 5]);
+  });
+});
+
+describe("normalizeOpenAnswer", () => {
+  it("sayıları sayısal değere indirger", () => {
+    expect(normalizeOpenAnswer("1.000", "number")).toBe("1000");
+    expect(normalizeOpenAnswer("3,5", "number")).toBe("3.5");
+    expect(normalizeOpenAnswer(" 42 ", "number")).toBe("42");
+  });
+
+  it("metinlerde boşlukları sadeleştirir ve Türkçe kurallarıyla büyütür", () => {
+    expect(normalizeOpenAnswer("  istanbul  ", "text")).toBe("İSTANBUL");
+    expect(normalizeOpenAnswer("otuz   üç", "text")).toBe("OTUZ ÜÇ");
+  });
+
+  it("sayıya çevrilemeyen girdiyi olduğu gibi bırakır", () => {
+    expect(normalizeOpenAnswer("kırk iki", "number")).toBe("kırkiki");
   });
 });
 

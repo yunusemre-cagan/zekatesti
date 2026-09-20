@@ -10,6 +10,7 @@
  */
 import {
   questionSchema,
+  type AnswerFormat,
   type MemoryTransform,
   type Question,
   type QuestionCategory,
@@ -59,10 +60,21 @@ export interface QuestionDraft {
   correctOptionId: string;
   correctOptionIds: string[];
 
+  // open_answer
+  answerFormat: AnswerFormat;
+  /** Kabul edilen cevaplar, satır satır girilir. */
+  acceptedAnswers: string;
+  placeholder: string;
+
   // memory_sequence
   sequence: string;
   itemDisplayMs: string;
   transform: MemoryTransform;
+
+  // nback_task
+  nbackN: string;
+  nbackSequence: string;
+  nbackItemDisplayMs: string;
 
   // speed_task
   timeLimitSec: string;
@@ -90,9 +102,15 @@ export function createEmptyDraft(): QuestionDraft {
     ],
     correctOptionId: "a",
     correctOptionIds: [],
+    answerFormat: "number",
+    acceptedAnswers: "",
+    placeholder: "",
     sequence: "",
     itemDisplayMs: "1000",
     transform: "reverse",
+    nbackN: "2",
+    nbackSequence: "",
+    nbackItemDisplayMs: "2000",
     timeLimitSec: "45",
     legend: [],
     items: [],
@@ -127,6 +145,22 @@ export function questionToDraft(question: Question): QuestionDraft {
         ...draft,
         options: question.options.map(toDraftOption),
         correctOptionIds: question.correctOptionIds,
+      };
+
+    case "open_answer":
+      return {
+        ...draft,
+        answerFormat: question.answerFormat,
+        acceptedAnswers: question.acceptedAnswers.join("\n"),
+        placeholder: question.placeholder ?? "",
+      };
+
+    case "nback_task":
+      return {
+        ...draft,
+        nbackN: String(question.n),
+        nbackSequence: question.sequence.join(" "),
+        nbackItemDisplayMs: String(question.itemDisplayMs),
       };
 
     case "memory_sequence":
@@ -214,15 +248,33 @@ function buildByType(draft: QuestionDraft, base: Record<string, unknown>): unkno
         correctOptionIds: draft.correctOptionIds,
       };
 
+    case "open_answer":
+      return {
+        ...base,
+        type: "open_answer",
+        answerFormat: draft.answerFormat,
+        // Her satır ayrı bir kabul edilen cevaptır; boş satırlar atılır.
+        acceptedAnswers: draft.acceptedAnswers
+          .split("\n")
+          .map((line) => line.trim())
+          .filter((line) => line !== ""),
+        ...optionalText("placeholder", draft.placeholder),
+      };
+
+    case "nback_task":
+      return {
+        ...base,
+        type: "nback_task",
+        n: toNumber(draft.nbackN),
+        sequence: splitSequence(draft.nbackSequence),
+        itemDisplayMs: toNumber(draft.nbackItemDisplayMs),
+      };
+
     case "memory_sequence":
       return {
         ...base,
         type: "memory_sequence",
-        // Dizi "7 2 9" veya "7,2,9" gibi yazılabilir; boşluk/virgül/tire ayraç kabul edilir.
-        sequence: draft.sequence
-          .toUpperCase()
-          .split(/[^0-9A-Z]+/)
-          .filter((item) => item !== ""),
+        sequence: splitSequence(draft.sequence),
         itemDisplayMs: toNumber(draft.itemDisplayMs),
         transform: draft.transform,
       };
@@ -246,6 +298,17 @@ function buildByType(draft: QuestionDraft, base: Record<string, unknown>): unkno
         })),
       };
   }
+}
+
+/**
+ * Dizi alanını ayrıştırır: "7 2 9", "7,2,9" veya "7-2-9" biçimleri kabul edilir,
+ * harfler büyütülür.
+ */
+function splitSequence(value: string): string[] {
+  return value
+    .toUpperCase()
+    .split(/[^0-9A-Z]+/)
+    .filter((item) => item !== "");
 }
 
 function toDraftOption(option: { id: string; text?: string; image?: string }): DraftOption {

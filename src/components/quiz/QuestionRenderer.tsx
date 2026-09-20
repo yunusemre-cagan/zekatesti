@@ -11,6 +11,8 @@
 import type { PublicQuestion } from "@/lib/questions/sanitize";
 import type { Answer } from "@/lib/test/answers";
 import { MemorySequenceView } from "./types/MemorySequenceView";
+import { NbackView } from "./types/NbackView";
+import { OpenAnswerView } from "./types/OpenAnswerView";
 import { MultiChoiceView } from "./types/MultiChoiceView";
 import { SingleChoiceView } from "./types/SingleChoiceView";
 import { SpeedTaskView } from "./types/SpeedTaskView";
@@ -71,6 +73,28 @@ export function QuestionRenderer({
             question={question}
             answer={answer?.type === "multi_choice" ? answer : undefined}
             onAnswer={onAnswer}
+          />
+        );
+
+      case "open_answer":
+        return (
+          <OpenAnswerView
+            question={question}
+            answer={answer?.type === "open_answer" ? answer : undefined}
+            onAnswer={onAnswer}
+          />
+        );
+
+      case "nback_task":
+        return (
+          <NbackView
+            question={question}
+            answer={answer?.type === "nback_task" ? answer : undefined}
+            onAnswer={onAnswer}
+            isStarted={taskStartedAtMs !== undefined}
+            isCompleted={isTaskCompleted}
+            onStart={onStartTask}
+            onComplete={onCompleteTask}
           />
         );
 
