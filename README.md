@@ -35,7 +35,8 @@ Gereksinim: Node.js 20.9 veya üzeri.
 ## Testin işleyişi
 
 1. **`/`** — Tek butonlu açılış ekranı. Üyelik veya giriş yoktur.
-2. **`/test`** — Aktif sorular kolaydan zora sırayla, her ekranda bir soru gösterilir.
+2. **`/test`** — Aktif sorular kolaydan zora sırayla, her ekranda bir soru gösterilir. Peş peşe
+   aynı kategoriden soru gelmez; bunun için zorluk sırası gerektiğinde bir seviye esnetilir.
    Sorular arasında ileri geri gezilebilir. İlerleme `sessionStorage`'a yazıldığı için sayfa
    yenilense de test kaldığı yerden devam eder.
 3. **`/result`** — Tahmini IQ, kategori dökümü, soru bazında süre ve çözüm açıklamaları.

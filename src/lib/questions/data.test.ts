@@ -10,6 +10,7 @@ import { access } from "node:fs/promises";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { createJsonQuestionRepository, QUESTIONS_FILE_PATH } from "./repository";
+import { findAdjacentSameCategory, getTestQuestions } from "@/lib/test/ordering";
 import type { Question } from "./schema";
 
 const PUBLIC_DIR = path.join(process.cwd(), "public");
@@ -57,5 +58,10 @@ describe("data/questions.json", () => {
     }
 
     expect(missing, "Eksik görseller").toEqual([]);
+  });
+
+  it("test sırasında aynı kategoriden iki soru yan yana gelmez", async () => {
+    const ordered = getTestQuestions(await repo.getAll());
+    expect(findAdjacentSameCategory(ordered), "Ardışık aynı kategori").toEqual([]);
   });
 });

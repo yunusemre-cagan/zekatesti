@@ -66,13 +66,31 @@ describe("GET /api/test/start", () => {
     expect(body.questions.length).toBeGreaterThan(0);
   });
 
-  it("soruları kolaydan zora sıralar", async () => {
+  it("soruları kolaydan zora sıralar (kategori dağılımı için en fazla bir seviye sapmayla)", async () => {
     const body = (await (await GET()).json()) as TestStartResponse;
     const all = await questionRepository.getAll();
     const difficulties = body.questions.map(
       (q) => all.find((source) => source.id === q.id)?.difficulty ?? 0,
     );
-    expect(difficulties).toEqual(difficulties.toSorted((a, b) => a - b));
+
+    // Aynı kategoriden iki soru yan yana gelmesin diye sıra yerel olarak esneyebilir;
+    // her sorunun zorluğu, ideal sıralamadaki karşılığından en fazla bir seviye sapmalıdır.
+    const ideal = difficulties.toSorted((a, b) => a - b);
+    const sapmalar = difficulties.map((difficulty, index) => Math.abs(difficulty - ideal[index]!));
+    expect(Math.max(...sapmalar)).toBeLessThanOrEqual(1);
+
+    // Genel eğilim korunmalı: ilk yarı, ikinci yarıdan kolay olmalı.
+    const half = Math.floor(difficulties.length / 2);
+    const ortalama = (values: number[]) => values.reduce((a, b) => a + b, 0) / values.length;
+    expect(ortalama(difficulties.slice(0, half))).toBeLessThan(ortalama(difficulties.slice(half)));
+  });
+
+  it("aynı kategoriden iki soruyu yan yana göndermez", async () => {
+    const body = (await (await GET()).json()) as TestStartResponse;
+    const tekrar = body.questions.filter(
+      (question, index) => index > 0 && body.questions[index - 1]!.category === question.category,
+    );
+    expect(tekrar.map((q) => q.id), "Ardışık aynı kategori").toEqual([]);
   });
 
   it("yanıtın hiçbir yerinde doğru cevap veya açıklama bulunmaz", async () => {

@@ -12,6 +12,7 @@ Proje Vercel'e deploy edilecektir.
 |---|---|
 | Admin kalıcılığı | **Seçenek A** — Admin paneli yalnızca yerelde (`npm run dev`) yazar. Akış: yerelde soru ekle → `git push` → Vercel otomatik yeniden deploy eder. Production'da admin paneli salt-okunurdur. |
 | Test uzunluğu | Her seferinde **tüm aktif sorular** sorulur. |
+| Soru sırası | Kolaydan zora; ayrıca peş peşe aynı kategoriden soru gelmez (zorluk sırası bunun için en fazla bir seviye esnetilir). |
 | Açılış ekranı | Tek butonlu ("Teste Başla") sade bir açılış. |
 | Süre ölçümü | Geri sayım yok. Süre **soru bazında** ölçülür, toplam süre bunların toplamıdır. Görünmeyen 45 dakikalık emniyet sınırı vardır. |
 | Sürenin puana etkisi | **Belirleyici.** Her sorunun puanı hız çarpanıyla çarpılır. |
@@ -61,7 +62,7 @@ src/
     questions/repository.ts   # Okuma/yazma soyutlaması (JSON implementasyonu)
     questions/sanitize.ts     # İstemciye giden sorudan doğru cevabı çıkarır
     scoring/                  # Cevap kontrolü, puanlama, IQ tahmini (saf fonksiyonlar + testler)
-    test/ordering.ts          # Soruların sıralanması (kolaydan zora)
+    test/ordering.ts          # Sıralama: kolaydan zora + kategori dağılımı
 data/questions.json
 public/questions/
 ```
