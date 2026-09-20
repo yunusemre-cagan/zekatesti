@@ -12,6 +12,8 @@
  */
 import { internalError, jsonError } from "@/lib/api/responses";
 import type { TestSubmitResponse } from "@/lib/api/contracts";
+import { isResultStorageEnabled } from "@/lib/results/repository";
+import { createResultToken } from "@/lib/results/token";
 import { questionRepository } from "@/lib/questions/repository";
 import { scoreTest } from "@/lib/scoring/score-test";
 import { submissionSchema } from "@/lib/test/answers";
@@ -38,12 +40,36 @@ export async function POST(request: Request): Promise<Response> {
 
   try {
     const questions = getTestQuestions(await questionRepository.getAll());
-    const result: TestSubmitResponse = scoreTest(
-      questions,
-      parsed.data.answers,
-      parsed.data.durations,
-    );
-    return Response.json(result);
+    const result = scoreTest(questions, parsed.data.answers, parsed.data.durations);
+
+    /**
+     * Sonuç burada KAYDEDİLMEZ. Kullanıcı sonuç ekranında açıkça onay verirse kaydedilir.
+     * Onay isteğinde gönderilen sayılara güvenilemeyeceği için sonuç imzalanıp tarayıcıya
+     * verilir; kayıt sırasında imza doğrulanır (bkz. lib/results/token.ts).
+     */
+    const body: TestSubmitResponse = {
+      ...result,
+      ...(isResultStorageEnabled() && {
+        resultToken: createResultToken(
+          {
+            estimatedIq: result.estimatedIq,
+            accuracyRatio: result.accuracyRatio,
+            scoreRatio: result.scoreRatio,
+            totalSeconds: result.totalSeconds,
+            questionCount: result.totalQuestions,
+            correctCount: result.correctCount,
+          },
+          result.questions.map((question) => ({
+            questionId: question.questionId,
+            status: question.status,
+            score: question.score,
+            seconds: question.seconds,
+          })),
+        ),
+      }),
+    };
+
+    return Response.json(body);
   } catch (error) {
     return internalError("POST /api/test/submit", error);
   }

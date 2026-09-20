@@ -28,6 +28,7 @@ Gereksinim: Node.js 20.9 veya üzeri.
 | `npm run lint` | ESLint kontrolü |
 | `npm run typecheck` | TypeScript tip kontrolü |
 | `npm test` | Birim ve API testleri (Vitest) |
+| `npm run db:init` | Sonuç tablolarını oluşturur (bir kez, kurulumda) |
 | `npm run images` | Soru görsellerini (SVG) yeniden üretir |
 
 ---
@@ -64,6 +65,53 @@ sıfır olacağı şekilde seçilmiştir. Soru puanı hiçbir zaman negatife dü
 dağılıma göre tam sayıya çevrilir ve 70–145 aralığına sınırlanır. Gerçek norm verisi
 bulunmadığı için dönüşüm, [`src/lib/config.ts`](src/lib/config.ts) içindeki iki varsayıma
 dayanır; katılımcı verisi toplandığında yalnızca o değerlerin güncellenmesi yeterlidir.
+
+---
+
+## Sonuç kaydı ve istatistikler
+
+Test bitince sonuç ekranında **isteğe bağlı** bir form görünür: doğum yılı, cinsiyet ve il.
+Kullanıcı onay kutusunu işaretlemedikçe hiçbir veri kaydedilmez; üç alan da boş bırakılabilir.
+Onay verilirse sonuç saklanır ve şunlar gösterilir:
+
+- **Genel ortalama:** katılımcıların ortalama IQ'su, doğruluk oranı ve süresi.
+- **Soru bazında:** "katılımcıların %X'i bu soruyu doğru yaptı (N kişi · ortalama süre)".
+
+**Hiçbir kimlik bilgisi saklanmaz:** ad, e-posta, IP adresi veya tarayıcı bilgisi kaydedilmez.
+`participant_id`, tarayıcıda üretilen rastgele bir değerdir ve yalnızca aynı tarayıcıdan
+yapılan tekrar denemeleri ayırmaya yarar; istatistiklere her katılımcının **ilk** denemesi girer.
+
+### Güvenlik: sonuçlar neden imzalanır?
+
+Kayıt, test bitiminden sonra ayrı bir istekle yapılır. O istekteki puanlara güvenilseydi
+herkes "IQ 145" gönderip istatistikleri bozabilirdi. Bu yüzden sunucu, testi puanladıktan
+sonra sonucu HMAC ile imzalayıp tarayıcıya verir; onay isteğinde imza doğrulanır ve
+**sunucunun kendi hesapladığı** değerler kaydedilir.
+
+### Kurulum
+
+1. Bir Postgres veritabanı oluşturun (Prisma Postgres, Vercel Postgres, Supabase — hepsi olur).
+2. Bağlantı adresini `.env.local` dosyasına ekleyin:
+   ```
+   POSTGRES_URL="postgres://..."
+   RESULT_SIGNING_SECRET="rastgele-uzun-bir-metin"
+   ```
+3. Tabloları oluşturun:
+   ```bash
+   npm run db:init
+   ```
+4. Aynı iki değişkeni Vercel'de de tanımlayın (Project → Settings → Environment Variables).
+
+`POSTGRES_URL` tanımlı değilse: yerelde sonuçlar `data/results.json` dosyasına yazılır
+(git'e girmez), production'da ise kayıt ve istatistik özelliği kapalı kalır — test yine çalışır.
+
+Veritabanı şeması: [db/schema.sql](db/schema.sql)
+
+### Yasal not
+
+Doğum yılı, cinsiyet ve il bilgisi toplandığı için bu veriler KVKK kapsamında değerlendirilir.
+Yayına almadan önce ne toplandığını ve neden toplandığını anlatan bir aydınlatma metni
+eklemeniz gerekir. Form üzerindeki açık onay kutusu bu amaçla tasarlanmıştır.
 
 ---
 
@@ -154,7 +202,10 @@ src/
     scoring/                # Cevap kontrolü, hız çarpanı, IQ, test puanlama
     test/                   # Oturum durumu, süre, saklama, cevap şeması
     admin/                  # Kimlik doğrulama, form taslağı, yükleme kuralları
+    results/                # Sonuç kaydı, imzalı paket, istatistikler
+    demographics/           # 81 il listesi
 data/questions.json         # Soru veritabanı
+db/schema.sql               # Sonuç tablolarının şeması
 public/questions/           # Soru görselleri
 scripts/                    # Görsel üretici
 ```
