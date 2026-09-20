@@ -17,8 +17,6 @@ Proje Vercel'e deploy edilecektir.
 | Sürenin puana etkisi | **Belirleyici.** Her sorunun puanı hız çarpanıyla çarpılır. |
 | Sekme arka plandayken | Sayaç **işlemeye devam eder**. |
 | Yorum dili | Kod içi açıklamalar Türkçe, değişken/fonksiyon isimleri İngilizce. |
-| Sonuç kaydı | Yalnızca kullanıcı onay verirse (opt-in). Doğum yılı, cinsiyet ve il isteğe bağlı; kimlik bilgisi saklanmaz. |
-| Sonuç veritabanı | Postgres (Prisma Postgres). Sorular hâlâ JSON dosyasında; yalnızca **sonuçlar** veritabanında. |
 
 ### Neden Seçenek A?
 Vercel'de çalışma anında dosya sistemi kalıcı değildir; production'da JSON'a veya `public/`

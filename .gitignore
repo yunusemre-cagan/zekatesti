@@ -43,6 +43,3 @@ next-env.d.ts
 
 # claude code yerel ayarları
 /.claude/
-
-# sonuç kayıtları (yalnızca yerel geliştirme yedeği)
-/data/results.json

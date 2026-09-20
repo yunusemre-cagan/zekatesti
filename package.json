@@ -10,12 +10,10 @@
     "typecheck": "next typegen && tsc --noEmit",
     "test": "vitest run --passWithNoTests",
     "test:watch": "vitest",
-    "images": "node scripts/generate-question-images.mjs",
-    "db:init": "node scripts/init-db.mjs"
+    "images": "node scripts/generate-question-images.mjs"
   },
   "dependencies": {
     "next": "16.3.5",
-    "pg": "^8.23.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "zod": "^4.6.5"
@@ -23,7 +21,6 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^24.13.6",
-    "@types/pg": "^8.23.1",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "eslint": "^9",

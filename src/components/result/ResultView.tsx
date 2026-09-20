@@ -8,12 +8,10 @@
  */
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, useSyncExternalStore } from "react";
+import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
-import type { TestStatsResponse } from "@/lib/api/contracts";
-import { ContributeForm } from "./ContributeForm";
 import { CATEGORY_LABELS } from "@/lib/questions/labels";
-import type { TestSubmitResponse } from "@/lib/api/contracts";
+import type { TestResult } from "@/lib/scoring/score-test";
 import type { AnswerStatus } from "@/lib/scoring/check-answer";
 import { clearResult, readRawResult, subscribeToResult } from "@/lib/test/storage";
 import { formatDuration } from "@/lib/test/time";
@@ -46,43 +44,14 @@ export function ResultView() {
   );
 
   // Metin değişmediği sürece aynı nesne kullanılır (gereksiz yeniden çizim olmaz).
-  const result = useMemo<TestSubmitResponse | undefined>(() => {
+  const result = useMemo<TestResult | undefined>(() => {
     if (rawResult === null) return undefined;
     try {
-      return JSON.parse(rawResult) as TestSubmitResponse;
+      return JSON.parse(rawResult) as TestResult;
     } catch {
       return undefined;
     }
   }, [rawResult]);
-
-  /**
-   * İstatistikler: genel ortalamalar ve soru bazlı başarı oranları. Sonuç kaydedildiğinde
-   * `refreshKey` artırılır ve yeni katkı hemen ortalamalara yansır.
-   */
-  const [stats, setStats] = useState<TestStatsResponse | undefined>();
-  const [refreshKey, setRefreshKey] = useState(0);
-
-  useEffect(() => {
-    let cancelled = false;
-    fetch("/api/stats")
-      .then((response) => (response.ok ? response.json() : undefined))
-      .then((data: TestStatsResponse | undefined) => {
-        if (!cancelled) setStats(data);
-      })
-      .catch(() => {
-        // İstatistik alınamazsa sonuç ekranı istatistiksiz çalışmaya devam eder.
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [refreshKey]);
-
-  const questionStats = useMemo(
-    () => new Map((stats?.questions ?? []).map((entry) => [entry.questionId, entry])),
-    [stats],
-  );
-
-  const handleSaved = useCallback(() => setRefreshKey((key) => key + 1), []);
 
   if (result === undefined) {
     return (
@@ -112,26 +81,6 @@ export function ResultView() {
         <SummaryCard label="Başarı" value={`%${Math.round(result.scoreRatio * 100)}`} />
         <SummaryCard label="Toplam süre" value={formatDuration(result.totalSeconds)} />
       </section>
-
-      {/* Genel ortalama: yeterli veri yoksa bölüm hiç gösterilmez. */}
-      {stats !== undefined && stats.overall.participantCount > 0 && (
-        <section className="flex flex-col gap-2 rounded-lg border border-zinc-200 p-4 text-sm dark:border-zinc-800">
-          <h2 className="font-medium">Diğer katılımcılara göre</h2>
-          <p className="text-zinc-600 dark:text-zinc-400">
-            {stats.overall.participantCount} katılımcının ortalaması: IQ{" "}
-            {Math.round(stats.overall.averageIq)} · doğruluk %
-            {Math.round(stats.overall.averageAccuracyRatio * 100)} · süre{" "}
-            {formatDuration(Math.round(stats.overall.averageTotalSeconds))}
-          </p>
-          <p>
-            {result.estimatedIq > stats.overall.averageIq
-              ? `Sonucunuz ortalamanın ${result.estimatedIq - Math.round(stats.overall.averageIq)} puan üzerinde.`
-              : result.estimatedIq < stats.overall.averageIq
-                ? `Sonucunuz ortalamanın ${Math.round(stats.overall.averageIq) - result.estimatedIq} puan altında.`
-                : "Sonucunuz tam ortalamada."}
-          </p>
-        </section>
-      )}
 
       {/* Hızın puana etkisi: yalnızca doğruluk puanı ile hız çarpanı sonrası puan farklıysa gösterilir. */}
       {result.scoreRatio < result.accuracyRatio && (
@@ -192,18 +141,6 @@ export function ResultView() {
                   </span>
                 </span>
               </div>
-              {(() => {
-                const entry = questionStats.get(question.questionId);
-                if (entry === undefined || entry.answerCount === 0) return null;
-                return (
-                  <p className="mt-1 text-sm text-zinc-500">
-                    Katılımcıların %{Math.round(entry.correctRatio * 100)}&apos;i bu soruyu doğru
-                    yaptı ({entry.answerCount} kişi · ortalama{" "}
-                    {formatDuration(Math.round(entry.averageSeconds))})
-                  </p>
-                );
-              })()}
-
               {question.explanation !== undefined && (
                 <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
                   {question.explanation}
@@ -213,10 +150,6 @@ export function ResultView() {
           ))}
         </ol>
       </section>
-
-      {result.resultToken !== undefined && (
-        <ContributeForm resultToken={result.resultToken} onSaved={handleSaved} />
-      )}
 
       <p className="text-sm text-zinc-500">
         Bu test eğlence ve kendini değerlendirme amaçlıdır. Sonuç, klinik geçerliliği olan bir
