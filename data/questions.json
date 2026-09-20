@@ -5,15 +5,27 @@
     "category": "numeric_pattern",
     "difficulty": 1,
     "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n2 → 6 → 12 → 20 → ?",
-    "options": [
-      { "id": "a", "text": "26" },
-      { "id": "b", "text": "28" },
-      { "id": "c", "text": "30" },
-      { "id": "d", "text": "32" }
-    ],
-    "correctOptionId": "c",
     "explanation": "Ardışık farklar 4, 6, 8 şeklinde ikişer artıyor; sıradaki fark 10 olduğundan 20 + 10 = 30. (Ayrıca her terim n × (n + 1): 1×2, 2×3, 3×4, 4×5, 5×6.)",
-    "active": true
+    "active": true,
+    "options": [
+      {
+        "id": "a",
+        "text": "26"
+      },
+      {
+        "id": "b",
+        "text": "28"
+      },
+      {
+        "id": "c",
+        "text": "30"
+      },
+      {
+        "id": "d",
+        "text": "32"
+      }
+    ],
+    "correctOptionId": "c"
   },
   {
     "id": "verbal-analogy-01",
@@ -21,15 +33,27 @@
     "category": "verbal_analogy",
     "difficulty": 1,
     "prompt": "Kitap : Okumak = Müzik : ?",
-    "options": [
-      { "id": "a", "text": "Nota" },
-      { "id": "b", "text": "Dinlemek" },
-      { "id": "c", "text": "Şarkıcı" },
-      { "id": "d", "text": "Enstrüman" }
-    ],
-    "correctOptionId": "b",
     "explanation": "Kitabın kullanım biçimi okumaktır; müziğin kullanım biçimi ise dinlemektir. Diğer şıklar müzikle ilişkili nesne veya kişilerdir, eylem değildir.",
-    "active": true
+    "active": true,
+    "options": [
+      {
+        "id": "a",
+        "text": "Nota"
+      },
+      {
+        "id": "b",
+        "text": "Dinlemek"
+      },
+      {
+        "id": "c",
+        "text": "Şarkıcı"
+      },
+      {
+        "id": "d",
+        "text": "Enstrüman"
+      }
+    ],
+    "correctOptionId": "b"
   },
   {
     "id": "working-memory-01",
@@ -37,11 +61,18 @@
     "category": "working_memory",
     "difficulty": 2,
     "prompt": "Ekranda sırayla rakamlar gösterilecek. Rakamları aklınızda tutun, ardından TERS sırayla yazın.",
-    "sequence": ["7", "2", "9", "4", "1", "8"],
-    "itemDisplayMs": 1000,
-    "transform": "reverse",
     "explanation": "Gösterilen dizi 7-2-9-4-1-8 idi; tersten yazılışı 8-1-4-9-2-7.",
-    "active": true
+    "active": true,
+    "sequence": [
+      "7",
+      "2",
+      "9",
+      "4",
+      "1",
+      "8"
+    ],
+    "itemDisplayMs": 1000,
+    "transform": "reverse"
   },
   {
     "id": "processing-speed-01",
@@ -49,34 +80,134 @@
     "category": "processing_speed",
     "difficulty": 2,
     "prompt": "Anahtar tabloya göre her sembolün karşılığı olan rakamı seçin. Süre dolmadan olabildiğince çok maddeyi doğru yanıtlayın.",
+    "explanation": "Her sembol anahtar tablodaki rakamla eşleşir: ★=1, ●=2, ▲=3, ■=4, ◆=5.",
+    "active": true,
     "timeLimitSec": 45,
     "legend": [
-      { "symbol": { "text": "★" }, "label": "1" },
-      { "symbol": { "text": "●" }, "label": "2" },
-      { "symbol": { "text": "▲" }, "label": "3" },
-      { "symbol": { "text": "■" }, "label": "4" },
-      { "symbol": { "text": "◆" }, "label": "5" }
+      {
+        "symbol": {
+          "text": "★"
+        },
+        "label": "1"
+      },
+      {
+        "symbol": {
+          "text": "●"
+        },
+        "label": "2"
+      },
+      {
+        "symbol": {
+          "text": "▲"
+        },
+        "label": "3"
+      },
+      {
+        "symbol": {
+          "text": "■"
+        },
+        "label": "4"
+      },
+      {
+        "symbol": {
+          "text": "◆"
+        },
+        "label": "5"
+      }
     ],
     "options": [
-      { "id": "1", "text": "1" },
-      { "id": "2", "text": "2" },
-      { "id": "3", "text": "3" },
-      { "id": "4", "text": "4" },
-      { "id": "5", "text": "5" }
+      {
+        "id": "1",
+        "text": "1"
+      },
+      {
+        "id": "2",
+        "text": "2"
+      },
+      {
+        "id": "3",
+        "text": "3"
+      },
+      {
+        "id": "4",
+        "text": "4"
+      },
+      {
+        "id": "5",
+        "text": "5"
+      }
     ],
     "items": [
-      { "id": "i1", "stimulus": { "text": "▲" }, "correctOptionId": "3" },
-      { "id": "i2", "stimulus": { "text": "★" }, "correctOptionId": "1" },
-      { "id": "i3", "stimulus": { "text": "◆" }, "correctOptionId": "5" },
-      { "id": "i4", "stimulus": { "text": "●" }, "correctOptionId": "2" },
-      { "id": "i5", "stimulus": { "text": "■" }, "correctOptionId": "4" },
-      { "id": "i6", "stimulus": { "text": "▲" }, "correctOptionId": "3" },
-      { "id": "i7", "stimulus": { "text": "◆" }, "correctOptionId": "5" },
-      { "id": "i8", "stimulus": { "text": "★" }, "correctOptionId": "1" },
-      { "id": "i9", "stimulus": { "text": "■" }, "correctOptionId": "4" },
-      { "id": "i10", "stimulus": { "text": "●" }, "correctOptionId": "2" }
-    ],
-    "explanation": "Her sembol anahtar tablodaki rakamla eşleşir: ★=1, ●=2, ▲=3, ■=4, ◆=5.",
-    "active": true
+      {
+        "id": "i1",
+        "stimulus": {
+          "text": "▲"
+        },
+        "correctOptionId": "3"
+      },
+      {
+        "id": "i2",
+        "stimulus": {
+          "text": "★"
+        },
+        "correctOptionId": "1"
+      },
+      {
+        "id": "i3",
+        "stimulus": {
+          "text": "◆"
+        },
+        "correctOptionId": "5"
+      },
+      {
+        "id": "i4",
+        "stimulus": {
+          "text": "●"
+        },
+        "correctOptionId": "2"
+      },
+      {
+        "id": "i5",
+        "stimulus": {
+          "text": "■"
+        },
+        "correctOptionId": "4"
+      },
+      {
+        "id": "i6",
+        "stimulus": {
+          "text": "▲"
+        },
+        "correctOptionId": "3"
+      },
+      {
+        "id": "i7",
+        "stimulus": {
+          "text": "◆"
+        },
+        "correctOptionId": "5"
+      },
+      {
+        "id": "i8",
+        "stimulus": {
+          "text": "★"
+        },
+        "correctOptionId": "1"
+      },
+      {
+        "id": "i9",
+        "stimulus": {
+          "text": "■"
+        },
+        "correctOptionId": "4"
+      },
+      {
+        "id": "i10",
+        "stimulus": {
+          "text": "●"
+        },
+        "correctOptionId": "2"
+      }
+    ]
   }
 ]

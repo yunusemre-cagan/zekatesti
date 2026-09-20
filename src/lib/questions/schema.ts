@@ -112,9 +112,17 @@ const optionListSchema = z
     message: "Şık kimlikleri benzersiz olmalı.",
   });
 
-/** Tüm soru tiplerinde ortak olan alanlar. */
-const baseQuestionShape = {
+/**
+ * Tüm soru tiplerinde ortak olan alanlar.
+ *
+ * Kimlik ayrı tutulur ve her soru şemasında `id → type → diğerleri` sırasıyla birleştirilir;
+ * böylece JSON dosyasına yazılan alan sırası okunabilir olur (Zod, çıktıyı şemadaki sırayla üretir).
+ */
+const identityShape = {
   id: questionIdSchema,
+};
+
+const baseQuestionShape = {
   category: z.enum(QUESTION_CATEGORIES),
   /** 1 = kolay, 2 = orta, 3 = zor. Puanlamada ağırlık olarak da kullanılır. */
   difficulty: z.literal([1, 2, 3]),
@@ -137,8 +145,9 @@ const baseQuestionShape = {
 
 export const singleChoiceQuestionSchema = z
   .object({
-    ...baseQuestionShape,
+    ...identityShape,
     type: z.literal("single_choice"),
+    ...baseQuestionShape,
     options: optionListSchema,
     correctOptionId: z.string(),
   })
@@ -149,8 +158,9 @@ export const singleChoiceQuestionSchema = z
 
 export const multiChoiceQuestionSchema = z
   .object({
-    ...baseQuestionShape,
+    ...identityShape,
     type: z.literal("multi_choice"),
+    ...baseQuestionShape,
     options: optionListSchema,
     correctOptionIds: z.array(z.string()).min(1, "En az bir doğru şık seçilmeli."),
   })
@@ -164,8 +174,9 @@ export const multiChoiceQuestionSchema = z
   });
 
 export const memorySequenceQuestionSchema = z.object({
-  ...baseQuestionShape,
+  ...identityShape,
   type: z.literal("memory_sequence"),
+  ...baseQuestionShape,
   /**
    * Sırayla gösterilecek öğeler. Tek karakterlik rakam/harf tutulur; böylece kullanıcı
    * cevabı ayraç kullanmadan tek satırda yazabilir ve karşılaştırma belirsiz olmaz.
@@ -189,8 +200,9 @@ export const speedTaskItemSchema = z.object({
 
 export const speedTaskQuestionSchema = z
   .object({
-    ...baseQuestionShape,
+    ...identityShape,
     type: z.literal("speed_task"),
+    ...baseQuestionShape,
     /** Görev için ayrılan süre (saniye). Süre bitince görev otomatik tamamlanır. */
     timeLimitSec: z.int().min(10).max(300),
     /**
