@@ -185,7 +185,7 @@
     "category": "logical_deduction",
     "difficulty": 3,
     "prompt": "Beş koşucu yarışı şu bilgilerle bitirdi:\n• Deniz, Ece'den önce bitirdi.\n• Can sonuncu oldu.\n• Ece, Berk'ten hemen sonra bitirdi.\n• Ayla birinci değildi.\n\nBuna göre yarışı kim birinci bitirmiştir?",
-    "explanation": "Can sonuncudur ve Ayla birinci değildir; geriye Deniz, Berk ve Ece kalır. Ece, Berk'ten hemen sonra bitirdiği için birinci olamaz. Berk birinci olsaydı Ece ikinci olurdu ve Deniz, Ece'den önce bitiremezdi. Dolayısıyla birinci Deniz'dir (sıra: Deniz, Berk, Ece, Ayla, Can).",
+    "explanation": "Can sonuncudur ve Ayla birinci değildir; geriye Deniz, Berk ve Ece kalır. Ece, Berk'ten hemen sonra bitirdiği için birinci olamaz. Berk birinci olsaydı Ece ikinci olurdu ve Deniz, Ece'den önce bitiremezdi. Geriye tek olasılık kalır: birinci Deniz'dir. (İki dizilim de mümkündür: Deniz-Berk-Ece-Ayla-Can veya Deniz-Ayla-Berk-Ece-Can; ikisinde de birinci Deniz'dir.)",
     "active": true,
     "options": [
       { "id": "a", "text": "Berk" },
@@ -384,8 +384,8 @@
     "type": "single_choice",
     "category": "problem_solving",
     "difficulty": 3,
-    "prompt": "Bir rafta soldan sağa dört kitap dizilecek: matematik, roman, şiir, tarih.\n• Tarih en sağdadır.\n• Roman ile şiir yan yanadır.\n• Matematik, romanın solundadır.\n\nSoldan ikinci sıraya hangi kitap gelir?",
-    "explanation": "Tarih 4. sıradadır, geriye ilk üç sıra kalır. Roman ile şiirin yan yana olması için bu ikili 1-2 veya 2-3 sıralarını kaplar. Matematik romanın solunda olduğundan roman 1. sırada olamaz; bu durumda matematik 1., roman 2., şiir 3. sırada olur. Yani soldan ikinci kitap romandır.",
+    "prompt": "Bir rafta soldan sağa dört kitap dizilecek: matematik, roman, şiir, tarih.\n• Tarih en sağdadır.\n• Şiir, tarihin hemen solundadır.\n• Matematik, romanın solundadır.\n\nSoldan ikinci sıraya hangi kitap gelir?",
+    "explanation": "Tarih 4., şiir ise 3. sıradadır. Geriye kalan iki kitaptan matematik, romanın solunda olmak zorunda olduğu için matematik 1., roman 2. sıraya gelir. Dizilim: matematik, roman, şiir, tarih.",
     "active": true,
     "options": [
       { "id": "a", "text": "Matematik" },
