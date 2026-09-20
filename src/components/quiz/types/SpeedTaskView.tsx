@@ -6,14 +6,21 @@
  * dönerse yalnızca sonucu görür. Kalan süre, başlangıç anından hesaplandığı için sayfa
  * yenilense bile görev baştan başlamaz.
  *
+ * Zorluğu belirleyen iki tasarım kararı:
+ *  - Anahtar tablo yalnızca görev başlamadan önce gösterilir. Görev sırasında tabloya
+ *    bakılabilseydi ölçülen şey hız değil, tabloyu okuma hızı olurdu.
+ *  - `shuffleOptions` açıksa şıkların yeri her maddede değişir; böylece kullanıcı şık
+ *    konumlarını ezberleyip bakmadan tıklayamaz.
+ *
  * Kullanım: QuestionRenderer, soru tipi "speed_task" olduğunda bunu kullanır.
  */
 "use client";
 
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { useCountdown } from "@/hooks/use-countdown";
 import type { PublicSpeedTaskQuestion } from "@/lib/questions/sanitize";
 import type { SpeedTaskAnswer } from "@/lib/test/answers";
+import { shuffleWithSeed } from "@/lib/test/shuffle";
 import { formatDuration } from "@/lib/test/time";
 import { MediaContent } from "../MediaContent";
 import { OptionButton } from "../OptionButton";
@@ -44,6 +51,20 @@ export function SpeedTaskView({
   // Cevaplanmamış ilk madde gösterilir; böylece maddeler sırayla ilerler.
   const currentItem = question.items.find((item) => responses[item.id] === undefined);
 
+  // Şık sırası madde numarasından türetilir: aynı madde içinde sabit kalır, madde
+  // değişince yeniden dizilir.
+  const currentItemIndex = currentItem === undefined
+    ? -1
+    : question.items.findIndex((item) => item.id === currentItem.id);
+
+  const visibleOptions = useMemo(
+    () =>
+      question.shuffleOptions === true && currentItemIndex >= 0
+        ? shuffleWithSeed(question.options, currentItemIndex)
+        : question.options,
+    [question.options, question.shuffleOptions, currentItemIndex],
+  );
+
   const handleExpire = useCallback(() => onComplete(), [onComplete]);
   const remainingSec = useCountdown({
     startedAtMs: isCompleted ? undefined : startedAtMs,
@@ -65,6 +86,11 @@ export function SpeedTaskView({
       <div className="flex flex-col items-center gap-4">
         {question.legend !== undefined && <Legend question={question} />}
         <p className="text-center text-zinc-600 dark:text-zinc-400">
+          {question.legend !== undefined && (
+            <>
+              <strong>Anahtar tabloyu ezberleyin: görev başlayınca gizlenecek.</strong>{" "}
+            </>
+          )}
           {question.items.length} madde, {formatDuration(question.timeLimitSec)} süre. Süre
           başladıktan sonra duraklatılamaz; yanlış işaretler puan düşürür.
         </p>
@@ -100,14 +126,12 @@ export function SpeedTaskView({
         </span>
       </div>
 
-      {question.legend !== undefined && <Legend question={question} />}
-
       <div className="flex items-center justify-center rounded-xl border border-zinc-300 py-10 text-5xl dark:border-zinc-700">
         <MediaContent media={currentItem.stimulus} imageClassName="max-h-24" />
       </div>
 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
-        {question.options.map((option) => (
+        {visibleOptions.map((option) => (
           <OptionButton
             key={option.id}
             option={option}

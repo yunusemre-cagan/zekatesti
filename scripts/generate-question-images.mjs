@@ -127,34 +127,54 @@ function cellOptionSvg(content) {
   return svgDocument(MATRIX_CELL, MATRIX_CELL, body);
 }
 
-/** matris-01: satır şekli belirler (daire/kare/üçgen), sütun sayıyı belirler (1/2/3). */
-function matrixShapeCount(row, col) {
-  const count = col + 1;
-  const drawShape = [
-    (cx, cy) => circle(cx, cy, 13),
-    (cx, cy) => square(cx, cy, 24),
-    (cx, cy) => triangle(cx, cy, 28),
-  ][row];
+const SHAPE_DRAWERS = [
+  (cx, cy) => circle(cx, cy, 13),
+  (cx, cy) => square(cx, cy, 24),
+  (cx, cy) => triangle(cx, cy, 28),
+];
 
-  // Şekiller hücre içinde yatay olarak eşit aralıklı dizilir.
-  const positions = Array.from(
-    { length: count },
-    (_, index) => MATRIX_CELL / 2 + (index - (count - 1) / 2) * 32,
-  );
-  return positions.map((cx) => drawShape(cx, MATRIX_CELL / 2)).join("");
+/** Hücre içeriği: belirtilen şekilden belirtilen adette, yatay ve eşit aralıklı. */
+function shapeRow(shapeIndex, count) {
+  const drawShape = SHAPE_DRAWERS[shapeIndex];
+  return Array.from({ length: count }, (_, index) =>
+    drawShape(MATRIX_CELL / 2 + (index - (count - 1) / 2) * 32, MATRIX_CELL / 2),
+  ).join("");
 }
 
-/** matris-02: sütun boyunca 45° döner, satır boyunca içindeki nokta sayısı artar. */
-function matrixRotateDots(row, col) {
-  const center = MATRIX_CELL / 2;
-  const arrow = `<path class="line" d="M ${center} ${center + 30} L ${center} ${center - 30} M ${center - 12} ${center - 18} L ${center} ${center - 30} L ${center + 12} ${center - 18}" />`;
-  const rotated = group(`rotate(${col * 45} ${center} ${center})`, arrow);
+/**
+ * matris-01: İki bağımsız "Latin karesi" iç içe geçer.
+ *  - Şekil adedi: (satır + sütun) mod 3 + 1  → her satırda ve her sütunda 1, 2, 3 birer kez.
+ *  - Şekil türü:  (satır − sütun) mod 3      → her satırda ve her sütunda daire, kare, üçgen birer kez.
+ *
+ * Kurallar çapraz yönde ilerlediği için ne tek başına satıra ne de tek başına sütuna bakarak
+ * çözülemez; iki kuralın birlikte görülmesi gerekir.
+ */
+function matrixShapeCount(row, col) {
+  const count = ((row + col) % 3) + 1;
+  const shapeIndex = (row - col + 3) % 3;
+  return shapeRow(shapeIndex, count);
+}
 
-  const dots = Array.from({ length: row + 1 }, (_, index) =>
-    circle(center + (index - row / 2) * 18, MATRIX_CELL - 16, 5, "solid"),
+/** Ok ve altındaki noktalar; dönüş açısı ve nokta sayısı serbestçe verilir. */
+function arrowCell(rotationDeg, dotCount) {
+  const center = MATRIX_CELL / 2;
+  const arrow = `<path class="line" d="M ${center} ${center + 26} L ${center} ${center - 26} M ${center - 11} ${center - 15} L ${center} ${center - 26} L ${center + 11} ${center - 15}" />`;
+  const rotated = group(`rotate(${rotationDeg} ${center} ${center})`, arrow);
+
+  const dots = Array.from({ length: dotCount }, (_, index) =>
+    circle(center + (index - (dotCount - 1) / 2) * 18, MATRIX_CELL - 14, 5, "solid"),
   ).join("");
 
   return rotated + dots;
+}
+
+/**
+ * matris-02: İki kural da çapraz ilerler; satır ya da sütun tek başına yeterli değildir.
+ *  - Dönüş açısı: (satır + sütun) × 45°  → sol üstte yukarı, sağ altta aşağı bakar.
+ *  - Nokta sayısı: (satır − sütun) mod 3 + 1 → her satırda ve sütunda 1, 2, 3 birer kez.
+ */
+function matrixRotateDots(row, col) {
+  return arrowCell((row + col) * 45, ((row - col + 3) % 3) + 1);
 }
 
 /** matris-03: kenar sayısı satırda +1, sütunda +1 artar (üçgen → … → yedigen). */
@@ -477,19 +497,21 @@ function buildFiles() {
   add("matris-01", "matris.svg", matrixSvg((row, col) =>
     row === 2 && col === 2 ? undefined : matrixShapeCount(row, col),
   ));
-  add("matris-01", "a.svg", cellOptionSvg(matrixShapeCount(2, 1))); // 2 üçgen
-  add("matris-01", "b.svg", cellOptionSvg(matrixShapeCount(2, 2))); // 3 üçgen (doğru)
-  add("matris-01", "c.svg", cellOptionSvg(matrixShapeCount(1, 2))); // 3 kare
-  add("matris-01", "d.svg", cellOptionSvg(matrixShapeCount(0, 2))); // 3 daire
+  // Aranan hücre (3. satır, 3. sütun): 2 adet daire.
+  add("matris-01", "a.svg", cellOptionSvg(shapeRow(2, 2))); // doğru sayı, yanlış şekil (2 üçgen)
+  add("matris-01", "b.svg", cellOptionSvg(shapeRow(0, 2))); // doğru
+  add("matris-01", "c.svg", cellOptionSvg(shapeRow(0, 3))); // doğru şekil, yanlış sayı (3 daire)
+  add("matris-01", "d.svg", cellOptionSvg(shapeRow(1, 1))); // ikisi de yanlış (1 kare)
 
   // matris-02: sütun = 45° dönüş, satır = nokta sayısı.
   add("matris-02", "matris.svg", matrixSvg((row, col) =>
     row === 2 && col === 2 ? undefined : matrixRotateDots(row, col),
   ));
-  add("matris-02", "a.svg", cellOptionSvg(matrixRotateDots(2, 2))); // doğru
-  add("matris-02", "b.svg", cellOptionSvg(matrixRotateDots(1, 2))); // nokta eksik
-  add("matris-02", "c.svg", cellOptionSvg(matrixRotateDots(2, 1))); // dönüş eksik
-  add("matris-02", "d.svg", cellOptionSvg(matrixRotateDots(0, 0))); // ilk hücre
+  // Aranan hücre (3. satır, 3. sütun): 180° dönmüş (aşağı bakan) ok ve 1 nokta.
+  add("matris-02", "a.svg", cellOptionSvg(arrowCell(180, 1))); // doğru
+  add("matris-02", "b.svg", cellOptionSvg(arrowCell(180, 2))); // dönüş doğru, nokta yanlış
+  add("matris-02", "c.svg", cellOptionSvg(arrowCell(135, 1))); // nokta doğru, dönüş eksik
+  add("matris-02", "d.svg", cellOptionSvg(arrowCell(90, 3))); // ikisi de yanlış
 
   // matris-03: kenar sayısı satır ve sütunla artar.
   add("matris-03", "matris.svg", matrixSvg((row, col) =>

@@ -67,6 +67,7 @@ export interface PublicSpeedTaskQuestion extends PublicQuestionBase {
   type: "speed_task";
   timeLimitSec: number;
   legend?: SpeedTaskQuestion["legend"];
+  shuffleOptions?: boolean;
   options: SpeedTaskQuestion["options"];
   items: { id: string; stimulus: SpeedTaskQuestion["items"][number]["stimulus"] }[];
 }
@@ -130,6 +131,7 @@ export function toPublicQuestion(question: Question): PublicQuestion {
         type: "speed_task",
         timeLimitSec: question.timeLimitSec,
         ...(question.legend !== undefined && { legend: question.legend }),
+        ...(question.shuffleOptions !== undefined && { shuffleOptions: question.shuffleOptions }),
         options: question.options,
         items: question.items.map((item) => ({ id: item.id, stimulus: item.stimulus })),
       };

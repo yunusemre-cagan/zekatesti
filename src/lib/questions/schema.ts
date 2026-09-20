@@ -212,12 +212,21 @@ export const speedTaskQuestionSchema = z
     /** Görev için ayrılan süre (saniye). Süre bitince görev otomatik tamamlanır. */
     timeLimitSec: z.int().min(10).max(300),
     /**
-     * İsteğe bağlı anahtar tablo (ör. ★ = 1, ● = 2). Sembol-rakam kodlama görevlerinde
-     * görev boyunca ekranda gösterilir.
+     * İsteğe bağlı anahtar tablo (ör. ★ = 1, ● = 2). Yalnızca görev başlamadan önce,
+     * ezberlenmesi için gösterilir; görev başladığında gizlenir (bkz. SpeedTaskView).
      */
     legend: z
       .array(z.object({ symbol: mediaSchema, label: nonEmptyText }))
       .optional(),
+    /**
+     * Şıkların yeri her maddeden sonra değişsin mi?
+     *
+     * Değişmediğinde kullanıcı bir süre sonra şıkların konumunu ezberler ve görev
+     * "okumadan tıklama" hâline gelir. Açıldığında her maddede şıklar yeniden dizilir;
+     * bu, dikkat ve arama hızını gerçekten ölçer. Karıştırma sırası madde numarasından
+     * türetilir, yani rastgele değildir ve her kullanıcıda aynıdır.
+     */
+    shuffleOptions: z.boolean().optional(),
     /**
      * Tüm maddeler için ortak şıklar. Hız görevlerinde kullanıcı her maddede aynı
      * seçenek setinden seçim yapar; bu, hem arayüzü hızlandırır hem de veri girişini sadeleştirir.
