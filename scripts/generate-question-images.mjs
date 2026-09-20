@@ -261,52 +261,59 @@ function matrixThreeRulesCell(sides, rotationDeg, dotCount) {
 
 const SERIES_CELL = 104;
 
-/**
- * Şekil serisindeki tek bir kare: köşelerden birinde dolu nokta ve içinde bir şekil bulunur.
- *  - Nokta her adımda saat yönünde bir köşe ilerler (4 adımda tur tamamlar).
- *  - İçteki şekil her adımda daire ↔ üçgen olarak değişir.
- */
-function seriesCell(step) {
-  const corners = [
-    [24, 24],
-    [SERIES_CELL - 24, 24],
-    [SERIES_CELL - 24, SERIES_CELL - 24],
-    [24, SERIES_CELL - 24],
-  ];
-  const [dotX, dotY] = corners[step % 4];
-  const inner =
-    step % 2 === 0
-      ? circle(SERIES_CELL / 2, SERIES_CELL / 2, 18)
-      : triangle(SERIES_CELL / 2, SERIES_CELL / 2, 38);
+const SERIES_CORNERS = [
+  [24, 24],
+  [SERIES_CELL - 24, 24],
+  [SERIES_CELL - 24, SERIES_CELL - 24],
+  [24, SERIES_CELL - 24],
+];
+
+/** Seri karesinin içeriği: köşe noktası + iç şekil (0 daire, 1 üçgen, 2 kare). */
+function seriesCellContent(cornerIndex, shapeIndex) {
+  const [dotX, dotY] = SERIES_CORNERS[cornerIndex % 4];
+  const center = SERIES_CELL / 2;
+  const inner = [
+    () => circle(center, center, 18),
+    () => triangle(center, center, 38),
+    () => square(center, center, 34),
+  ][shapeIndex % 3]();
 
   return `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${inner}${circle(dotX, dotY, 7, "solid")}`;
 }
 
-/** Şıklar için tek kare: nokta köşesi ve iç şekil ayrı ayrı verilir. */
-function seriesOptionSvg(cornerIndex, innerIsCircle) {
-  const corners = [
-    [24, 24],
-    [SERIES_CELL - 24, 24],
-    [SERIES_CELL - 24, SERIES_CELL - 24],
-    [24, SERIES_CELL - 24],
-  ];
-  const [dotX, dotY] = corners[cornerIndex % 4];
-  const inner = innerIsCircle
-    ? circle(SERIES_CELL / 2, SERIES_CELL / 2, 18)
-    : triangle(SERIES_CELL / 2, SERIES_CELL / 2, 38);
-
-  const body = `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${inner}${circle(dotX, dotY, 7, "solid")}`;
-  return svgDocument(SERIES_CELL, SERIES_CELL, body);
+/**
+ * seri-01: İki kural farklı periyotlarda ilerler; bu yüzden "bir sonraki" tahmin edilirken
+ * ikisini ayrı ayrı takip etmek gerekir.
+ *  - Köşedeki nokta her adımda saat yönünde bir köşe ilerler (periyot 4).
+ *  - İçteki şekil daire → üçgen → kare sırasını izler (periyot 3).
+ * Periyotlar farklı olduğu için desen ancak 12 adımda tekrar eder; "bir önceki gibi olur"
+ * kestirmesi yanlış sonuç verir.
+ */
+function seriesCell(step) {
+  return seriesCellContent(step % 4, step % 3);
 }
 
-/** Soruda gösterilen şerit: ilk dört adım ve sonunda soru işareti. */
-function seriesPromptSvg(stepCount) {
+/** Şıklar için tek kare: köşe ve iç şekil ayrı ayrı verilir. */
+function seriesOptionSvg(cornerIndex, shapeIndex) {
+  return svgDocument(SERIES_CELL, SERIES_CELL, seriesCellContent(cornerIndex, shapeIndex));
+}
+
+/**
+ * seri-02: Ok her adımda 60° döner (periyot 6), altındaki nokta sayısı 1-2-3 sırasını
+ * izler (periyot 3). İki kuralın periyodu farklıdır.
+ */
+function series2Cell(step) {
+  return arrowCell(step * 60, (step % 3) + 1);
+}
+
+/** Soruda gösterilen şerit: ilk adımlar ve sonunda soru işareti. */
+function seriesPromptSvg(stepCount, renderCell = seriesCell) {
   const gap = 10;
   const width = (SERIES_CELL + gap) * (stepCount + 1) - gap;
   let body = "";
 
   for (let step = 0; step < stepCount; step += 1) {
-    body += group(`translate(${step * (SERIES_CELL + gap)} 0)`, seriesCell(step));
+    body += group(`translate(${step * (SERIES_CELL + gap)} 0)`, renderCell(step));
   }
 
   const lastX = stepCount * (SERIES_CELL + gap);
@@ -314,6 +321,123 @@ function seriesPromptSvg(stepCount) {
   body += `<text class="label" x="${lastX + SERIES_CELL / 2}" y="${SERIES_CELL / 2 + 12}">?</text>`;
 
   return svgDocument(width, SERIES_CELL, body);
+}
+
+// ---------------------------------------------------------------------------
+// 1c) Latin karesi (kısıt çıkarımı) ve at hamlesi tahtası
+// ---------------------------------------------------------------------------
+
+const GRID_CELL = 74;
+
+/**
+ * Kare ızgara çizer. `cellContent(row, col)` hücre içeriğini üretir; boş metin dönerse
+ * hücre boş bırakılır. `highlight` verilen hücreyi vurgular (aranan hücre).
+ */
+function gridBody(size, cellContent, highlight, offsetX = 0, offsetY = 0) {
+  let body = "";
+
+  for (let row = 0; row < size; row += 1) {
+    for (let col = 0; col < size; col += 1) {
+      const x = offsetX + col * GRID_CELL;
+      const y = offsetY + row * GRID_CELL;
+      const isHighlighted = highlight !== undefined && highlight[0] === row && highlight[1] === col;
+
+      body += `<rect class="${isHighlighted ? "line" : "frame"}" x="${x}" y="${y}" width="${GRID_CELL}" height="${GRID_CELL}" ${isHighlighted ? 'stroke-width="3.5"' : ""} />`;
+
+      const content = cellContent(row, col);
+      if (content !== "") {
+        body += `<text class="label" x="${x + GRID_CELL / 2}" y="${y + GRID_CELL / 2 + 12}">${content}</text>`;
+      }
+    }
+  }
+  return body;
+}
+
+/** Tek bir ızgarayı kendi başına bir SVG belgesi olarak döner. */
+function gridSvg(size, cellContent, highlight) {
+  const board = GRID_CELL * size;
+  return svgDocument(board, board, gridBody(size, cellContent, highlight));
+}
+
+/**
+ * latin-01: 4×4 Latin karesi. Her satırda ve her sütunda 1-4 rakamları birer kez bulunur.
+ * Bulmaca tek çözümlüdür ve aranan hücre yalnızca kendi satırına ve sütununa bakarak
+ * bulunamaz; önce başka hücrelerin çözülmesi gerekir (scripts/… içindeki arama ile doğrulandı).
+ */
+const LATIN_PUZZLE = [
+  [0, 0, 0, 0],
+  [0, 0, 1, 2],
+  [0, 1, 4, 3],
+  [4, 3, 2, 1],
+];
+
+function latinSquareSvg() {
+  return gridSvg(
+    4,
+    (row, col) => {
+      if (row === 0 && col === 0) return "?";
+      const value = LATIN_PUZZLE[row][col];
+      return value === 0 ? "" : String(value);
+    },
+    [0, 0],
+  );
+}
+
+/**
+ * at-01: Tek görselde iki tahta — solda hareket kuralı, sağda soru tahtası.
+ *
+ * Sol tahta: ortadaki taştan gidilebilen sekiz kare noktayla işaretlidir; böylece satranç
+ * bilgisi gerekmez. Sağ tahta: başlangıç A (sol alt köşe), hedef B (tam orta). Bu iki kare
+ * arasında en az dört hamle gerekir; "iki hamle" sezgisi yanlıştır (BFS ile doğrulandı).
+ */
+function knightQuestionSvg() {
+  const KNIGHT_OFFSETS = [
+    [-2, -1],
+    [-2, 1],
+    [-1, -2],
+    [-1, 2],
+    [1, -2],
+    [1, 2],
+    [2, -1],
+    [2, 1],
+  ];
+  const reachable = new Set(KNIGHT_OFFSETS.map(([dr, dc]) => `${2 + dr},${2 + dc}`));
+
+  const boardSize = GRID_CELL * 5;
+  const gap = 60;
+  const titleHeight = 40;
+  const width = boardSize * 2 + gap;
+  const height = boardSize + titleHeight;
+
+  const title = (text, x) =>
+    `<text class="label" style="font-size:26px" x="${x + boardSize / 2}" y="26">${text}</text>`;
+
+  const body =
+    title("Hareket kuralı", 0) +
+    gridBody(
+      5,
+      (row, col) => {
+        if (row === 2 && col === 2) return "●";
+        return reachable.has(`${row},${col}`) ? "×" : "";
+      },
+      undefined,
+      0,
+      titleHeight,
+    ) +
+    title("Tahta", boardSize + gap) +
+    gridBody(
+      5,
+      (row, col) => {
+        if (row === 4 && col === 0) return "A";
+        if (row === 2 && col === 2) return "B";
+        return "";
+      },
+      undefined,
+      boardSize + gap,
+      titleHeight,
+    );
+
+  return svgDocument(width, height, body);
 }
 
 // ---------------------------------------------------------------------------
@@ -425,7 +549,12 @@ function isoFigureSvg(cubes, turns = 0, mirrored = false) {
 
 const PAPER = 120;
 
-/** Katlama adımlarını gösteren şerit: açık kağıt → katlanmış kağıt (delikli). */
+/**
+ * Katlama adımlarını gösteren şerit: açık kağıt (katlama çizgileriyle) → katlanmış kağıt (delikli).
+ *
+ * Katlama sırası: 1) dikey ortadan, 2) yatay ortadan, 3) yeniden dikey ortadan.
+ * Her katlama kat sayısını ikiye katlar; tek delik tüm katlardan geçer.
+ */
 function foldingPromptSvg({ folds, holes }) {
   const gap = 30;
   const width = PAPER * 2 + gap + 40;
@@ -435,8 +564,11 @@ function foldingPromptSvg({ folds, holes }) {
   // 1. panel: açık kağıt ve katlama çizgisi/okları
   body += `<rect class="frame" x="0" y="10" width="${PAPER}" height="${PAPER}" rx="4" />`;
   body += `<line class="dashed" x1="${PAPER / 2}" y1="10" x2="${PAPER / 2}" y2="${PAPER + 10}" />`;
-  if (folds === 2) {
+  if (folds >= 2) {
     body += `<line class="dashed" x1="0" y1="${PAPER / 2 + 10}" x2="${PAPER}" y2="${PAPER / 2 + 10}" />`;
+  }
+  if (folds >= 3) {
+    body += `<line class="dashed" x1="${PAPER / 4}" y1="10" x2="${PAPER / 4}" y2="${PAPER + 10}" />`;
   }
 
   // Aradaki ok: "katlanır" anlamında
@@ -445,8 +577,8 @@ function foldingPromptSvg({ folds, holes }) {
 
   // 2. panel: katlanmış kağıt (genişlik yarıya, iki katta yükseklik de yarıya iner) ve delikler
   const foldedX = PAPER + gap + 12;
-  const foldedWidth = PAPER / 2;
-  const foldedHeight = folds === 2 ? PAPER / 2 : PAPER;
+  const foldedWidth = folds >= 3 ? PAPER / 4 : PAPER / 2;
+  const foldedHeight = folds >= 2 ? PAPER / 2 : PAPER;
   body += `<rect class="frame" x="${foldedX}" y="10" width="${foldedWidth}" height="${foldedHeight}" rx="4" />`;
   body += holes
     .map(([hx, hy]) => circle(foldedX + hx * foldedWidth, 10 + hy * foldedHeight, 8, "solid"))
@@ -544,14 +676,25 @@ function buildFiles() {
   add("matris-05", "d.svg", cellOptionSvg(matrixThreeRulesCell(5, 40, 2))); // dönüş yanlış
 
   /**
-   * seri-01: dört adımlık şekil serisi; beşinci adım aranır.
-   * 5. adım (index 4): nokta 4 mod 4 = 0 → sol üst köşe; iç şekil 4 çift → daire.
+   * seri-01: dört adım gösterilir, beşinci adım (index 4) aranır.
+   * Nokta: 4 mod 4 = 0 → sol üst köşe. İç şekil: 4 mod 3 = 1 → üçgen.
+   * "Şekil iki adımda bir değişiyor" diye düşünen kişi daire seçer ve yanılır.
    */
   add("seri-01", "seri.svg", seriesPromptSvg(4));
-  add("seri-01", "a.svg", seriesOptionSvg(0, true)); // doğru
-  add("seri-01", "b.svg", seriesOptionSvg(1, true)); // nokta bir köşe ileride
-  add("seri-01", "c.svg", seriesOptionSvg(0, false)); // iç şekil yanlış
-  add("seri-01", "d.svg", seriesOptionSvg(3, true)); // nokta bir köşe geride
+  add("seri-01", "a.svg", seriesOptionSvg(0, 1)); // doğru: sol üst köşe + üçgen
+  add("seri-01", "b.svg", seriesOptionSvg(0, 0)); // köşe doğru, şekil daire (periyot 2 sanısı)
+  add("seri-01", "c.svg", seriesOptionSvg(1, 1)); // şekil doğru, köşe bir ileride
+  add("seri-01", "d.svg", seriesOptionSvg(0, 2)); // köşe doğru, şekil kare
+
+  /**
+   * seri-02: ok 60°'şer döner (periyot 6), nokta sayısı 1-2-3 sırasını izler (periyot 3).
+   * Aranan 5. adım (index 4): 240° dönmüş ok ve 2 nokta.
+   */
+  add("seri-02", "seri.svg", seriesPromptSvg(4, series2Cell));
+  add("seri-02", "a.svg", cellOptionSvg(arrowCell(240, 3))); // dönüş doğru, nokta yanlış
+  add("seri-02", "b.svg", cellOptionSvg(arrowCell(240, 2))); // doğru
+  add("seri-02", "c.svg", cellOptionSvg(arrowCell(180, 2))); // nokta doğru, dönüş eksik
+  add("seri-02", "d.svg", cellOptionSvg(arrowCell(300, 1))); // ikisi de yanlış
 
   // --- Uzamsal düşünme ---
   // uzamsal-01: bayrak figürünün 90° döndürülmüş hali (tek doğru).
@@ -618,22 +761,55 @@ function buildFiles() {
   add("katlama-01", "c.svg", foldingOptionSvg([[0.25, 0.35], [0.25, 0.65]])); // yanlış eksen
   add("katlama-01", "d.svg", foldingOptionSvg([[0.5, 0.35], [0.5, 0.65]])); // ortada iki delik
 
-  // katlama-02: iki kez katlanır (dikey + yatay), tek delik → açılınca dört delik.
-  add("katlama-02", "soru.svg", foldingPromptSvg({ folds: 2, holes: [[0.5, 0.5]] }));
-  add("katlama-02", "a.svg", foldingOptionSvg([[0.25, 0.25], [0.75, 0.25]])); // iki delik
-  add("katlama-02", "b.svg", foldingOptionSvg([[0.25, 0.25], [0.25, 0.75]])); // iki delik
-  add("katlama-02", "c.svg", foldingOptionSvg([
+  /**
+   * katlama-02: üç kez katlanır (dikey → yatay → yeniden dikey), tek delik sekiz kattan geçer.
+   * Katlı kağıttaki delik (0.5, 0.5) konumunda; açılınca x ekseninde dört, y ekseninde iki
+   * konumda olmak üzere sekiz delik oluşur.
+   */
+  add("katlama-02", "soru.svg", foldingPromptSvg({ folds: 3, holes: [[0.5, 0.5]] }));
+  const EIGHT_HOLES = [0.125, 0.375, 0.625, 0.875].flatMap((x) => [
+    [x, 0.25],
+    [x, 0.75],
+  ]);
+  add("katlama-02", "a.svg", foldingOptionSvg(EIGHT_HOLES.slice(0, 4))); // dört delik (bir katlama eksik sanısı)
+  add("katlama-02", "b.svg", foldingOptionSvg([0.125, 0.375, 0.625, 0.875].map((x) => [x, 0.5]))); // tek sırada dört
+  add("katlama-02", "c.svg", foldingOptionSvg(EIGHT_HOLES)); // doğru
+  add("katlama-02", "d.svg", foldingOptionSvg([0.25, 0.75].flatMap((x) => [
+    [x, 0.25],
+    [x, 0.75],
+  ]))); // dört delik, yanlış konumlar
+
+  /**
+   * katlama-03: iki katlama ama delik merkezde değil; açılınca dört delik simetrik fakat
+   * "çeyrek merkezleri" dışında konumlanır. Konumu doğru kestirmek gerekir.
+   */
+  add("katlama-03", "soru.svg", foldingPromptSvg({ folds: 2, holes: [[0.6, 0.3]] }));
+  add("katlama-03", "a.svg", foldingOptionSvg([
+    [0.3, 0.15],
+    [0.7, 0.15],
+    [0.3, 0.85],
+    [0.7, 0.85],
+  ])); // doğru
+  add("katlama-03", "b.svg", foldingOptionSvg([
     [0.25, 0.25],
     [0.75, 0.25],
     [0.25, 0.75],
     [0.75, 0.75],
-  ])); // doğru
-  add("katlama-02", "d.svg", foldingOptionSvg([
-    [0.5, 0.25],
-    [0.5, 0.75],
-    [0.25, 0.5],
-    [0.75, 0.5],
-  ])); // yanlış konumlar
+  ])); // çeyrek merkezleri (ezber cevap)
+  add("katlama-03", "c.svg", foldingOptionSvg([
+    [0.3, 0.15],
+    [0.7, 0.15],
+  ])); // yalnızca üst yarı
+  add("katlama-03", "d.svg", foldingOptionSvg([
+    [0.15, 0.3],
+    [0.85, 0.3],
+    [0.15, 0.7],
+    [0.85, 0.7],
+  ])); // eksenler ters
+
+  // --- Kısıt çıkarımı ve planlama ---
+  add("latin-01", "izgara.svg", latinSquareSvg());
+  add("at-01", "soru.svg", knightQuestionSvg());
 
   // --- Hız görevi: şekil eşleştirme sembolleri ---
   for (const key of Object.keys(MATCH_SHAPES)) {

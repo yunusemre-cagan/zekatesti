@@ -529,15 +529,15 @@
     "id": "sifre-02",
     "type": "single_choice",
     "category": "coding_decoding",
-    "difficulty": 1,
-    "prompt": "Bir şifrede ELMA kelimesi AMLE biçiminde yazılıyor.\n\nBuna göre ARMUT nasıl yazılır?",
-    "explanation": "Kural, harflerin sırasını tersine çevirmektir: ELMA → AMLE. Aynı kuralla ARMUT → TUMRA olur.",
+    "difficulty": 3,
+    "prompt": "Bir şifrede KALEM kelimesi 51432 biçiminde yazılıyor.\n\nBuna göre LEKAM nasıl yazılır?",
+    "explanation": "Önce harf-rakam eşleşmesi çıkarılır: K=5, A=1, L=4, E=3, M=2. Ardından yeni kelimenin harfleri sırayla bu rakamlara çevrilir: L-E-K-A-M = 4-3-5-1-2. Dikkat edilmesi gereken nokta, rakamların kelimedeki sıraya göre değil harflere göre sabit olmasıdır.",
     "active": true,
     "options": [
-      { "id": "a", "text": "TUMRA" },
-      { "id": "b", "text": "TUMAR" },
-      { "id": "c", "text": "ATUMR" },
-      { "id": "d", "text": "RAMUT" }
+      { "id": "a", "text": "43512" },
+      { "id": "b", "text": "43521" },
+      { "id": "c", "text": "34512" },
+      { "id": "d", "text": "45312" }
     ],
     "correctOptionId": "a"
   },
@@ -563,9 +563,9 @@
     "type": "single_choice",
     "category": "paper_folding",
     "difficulty": 3,
-    "prompt": "Kare bir kâğıt önce dikey, sonra yatay olarak katlanıyor ve katlı haldeyken tek bir delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
+    "prompt": "Kare bir kâğıt üç kez katlanıyor (önce dikey, sonra yatay, sonra yeniden dikey) ve katlı haldeyken tek bir delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
     "promptImage": "/questions/katlama-02/soru.svg",
-    "explanation": "İki katlama dört kat oluşturur ve tek delik dört kattan birden geçer. Açıldığında delikler, her çeyrekte birer tane olmak üzere dört noktada simetrik biçimde belirir.",
+    "explanation": "Her katlama kat sayısını ikiye katlar: üç katlama sonunda kâğıt sekiz kat olur ve tek delik sekiz kattan birden geçer. İki dikey katlama yatayda dört, bir yatay katlama ise dikeyde iki konum oluşturur; açıldığında 4 × 2 = 8 delik görülür.",
     "active": true,
     "options": [
       { "id": "a", "image": "/questions/katlama-02/a.svg" },
@@ -672,10 +672,10 @@
     "id": "seri-01",
     "type": "single_choice",
     "category": "figure_series",
-    "difficulty": 2,
+    "difficulty": 3,
     "prompt": "Şekil serisi aşağıdaki gibi ilerliyor. Sıradaki kare hangisidir?",
     "promptImage": "/questions/seri-01/seri.svg",
-    "explanation": "İki kural birlikte işler: köşedeki dolu nokta her adımda saat yönünde bir köşe ilerler (dört adımda tur tamamlar), içteki şekil ise her adımda daire ile üçgen arasında değişir. Beşinci adımda nokta başladığı köşeye (sol üst) döner ve içteki şekil yine daire olur.",
+    "explanation": "İki kural farklı hızlarda ilerler. Köşedeki nokta saat yönünde bir köşe kayar ve dört adımda tur tamamlar. İçteki şekil ise daire → üçgen → kare sırasını izler ve üç adımda tekrar eder. Beşinci adımda nokta başladığı köşeye (sol üst) döner, ama şekil sırası üçlü olduğu için daireye değil üçgene gelir. \"Şekil iki adımda bir değişiyor\" varsayımı bu soruda yanlış sonuç verir.",
     "active": true,
     "options": [
       { "id": "a", "image": "/questions/seri-01/a.svg" },
@@ -700,5 +700,89 @@
       { "id": "d", "text": "Bursa — koşu" }
     ],
     "correctOptionId": "a"
+  },
+  {
+    "id": "sifre-04",
+    "type": "single_choice",
+    "category": "coding_decoding",
+    "difficulty": 2,
+    "prompt": "Bir şifrede harfler ikişerli gruplar hâlinde yer değiştiriyor; tek kalan harf yerinde kalıyor:\n\nKALEM → AKELM\n\nBuna göre ARMUT nasıl yazılır?",
+    "explanation": "Harfler ikişerli gruplanır ve her grup kendi içinde yer değiştirir: KA→AK, LE→EL, M tek kaldığı için yerinde kalır. Aynı kural ARMUT'a uygulanır: AR→RA, MU→UM, T yerinde kalır. Sonuç: RAUMT.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "RAUMT" },
+      { "id": "b", "text": "RAMUT" },
+      { "id": "c", "text": "TUMRA" },
+      { "id": "d", "text": "ARUMT" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "katlama-03",
+    "type": "single_choice",
+    "category": "paper_folding",
+    "difficulty": 3,
+    "prompt": "Kare bir kâğıt önce dikey, sonra yatay olarak katlanıyor. Delik bu kez kâğıdın ortasında değil, kenara yakın bir noktada açılıyor. Kâğıt açıldığında hangi desen görülür?",
+    "promptImage": "/questions/katlama-03/soru.svg",
+    "explanation": "Delik, katlı kâğıdın sağ üst bölgesindedir. Dikey katlama deliği yatay eksende, yatay katlama ise dikey eksende yansıtır. Açıldığında dört delik oluşur; ancak bunlar çeyreklerin tam ortasında değil, deliğin katlı kâğıttaki konumuna karşılık gelen noktalardadır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/katlama-03/a.svg" },
+      { "id": "b", "image": "/questions/katlama-03/b.svg" },
+      { "id": "c", "image": "/questions/katlama-03/c.svg" },
+      { "id": "d", "image": "/questions/katlama-03/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "seri-02",
+    "type": "single_choice",
+    "category": "figure_series",
+    "difficulty": 3,
+    "prompt": "Şekil serisi aşağıdaki gibi ilerliyor. Sıradaki kare hangisidir?",
+    "promptImage": "/questions/seri-02/seri.svg",
+    "explanation": "Ok her adımda 60° saat yönünde döner; altı adımda tam tur atar. Nokta sayısı ise 1-2-3 sırasını izler ve üç adımda tekrar eder. Beşinci adımda ok başlangıcına göre 240° dönmüş olur ve nokta sayısı ikiye gelir.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/seri-02/a.svg" },
+      { "id": "b", "image": "/questions/seri-02/b.svg" },
+      { "id": "c", "image": "/questions/seri-02/c.svg" },
+      { "id": "d", "image": "/questions/seri-02/d.svg" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "latin-01",
+    "type": "single_choice",
+    "category": "logical_deduction",
+    "difficulty": 3,
+    "prompt": "Aşağıdaki 4×4 ızgarada her satırda ve her sütunda 1, 2, 3, 4 rakamlarının her biri yalnızca bir kez bulunur.\n\nSoru işaretli hücreye hangi rakam gelmelidir?",
+    "promptImage": "/questions/latin-01/izgara.svg",
+    "explanation": "Soru işaretli hücre doğrudan bulunamaz; önce başka hücreler çözülmelidir. İkinci satırda 1 ve 2 vardır, yani boş iki hücreye 3 ve 4 gelir. İkinci sütunda 1 ve 3 kullanıldığı için o sütundaki boşluk 4 olur; böylece ikinci satırın ilk hücresi 3 kalır. Üçüncü satırda 1, 4 ve 3 bulunduğundan ilk hücresi 2 olur. Artık ilk sütunda 3, 2 ve 4 vardır; geriye tek seçenek kalır: soru işaretli hücre 1'dir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "3" },
+      { "id": "d", "text": "4" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "at-01",
+    "type": "single_choice",
+    "category": "spatial_reasoning",
+    "difficulty": 3,
+    "prompt": "Bir taş, soldaki tahtadaki gibi hareket eder: bir yönde iki kare, ona dik yönde bir kare. Ortadaki taş, × ile işaretli karelere gidebilir. Satranç bilmek gerekmez, yalnızca bu kural geçerlidir.\n\nSağdaki tahtada bu taş, A karesinden B karesine en az kaç hamlede gider?",
+    "promptImage": "/questions/at-01/soru.svg",
+    "explanation": "Sezgisel cevap iki hamledir ama mümkün değildir: A'dan iki hamlede ulaşılabilen kareler arasında B yoktur. Taş her hamlede bulunduğu karenin komşu renginde bir kareye geçer; A ile B aynı renkte olduğundan hamle sayısı çift olmak zorundadır. Geriye en az dört hamle kalır. Örnek yol: A → sağa 1 yukarı 2 → sağa 1 yukarı 2 → sağa 2 aşağı 1 → sola 2 aşağı 1 → B.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "2 hamle" },
+      { "id": "b", "text": "3 hamle" },
+      { "id": "c", "text": "4 hamle" },
+      { "id": "d", "text": "5 hamle" }
+    ],
+    "correctOptionId": "c"
   }
 ]
