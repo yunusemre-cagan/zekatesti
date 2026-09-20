@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 190 170" width="190" height="170">
+<style>
+  .line { stroke: #1a1a1a; fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .solid { fill: #1a1a1a; stroke: none; }
+  .frame { stroke: #b0b0b0; fill: none; stroke-width: 2; }
+  .dashed { stroke: #b0b0b0; fill: none; stroke-width: 2; stroke-dasharray: 6 6; }
+  .label { fill: #1a1a1a; font-family: system-ui, sans-serif; font-size: 34px; text-anchor: middle; }
+  /* Küp yüzleri: dolgu, arkadaki küplerin kenarlarını gizler (derinlik algısı için üç ton). */
+  .face { stroke: #1a1a1a; stroke-width: 2.5; stroke-linejoin: round; }
+  .face-top { fill: #ffffff; }
+  .face-left { fill: #d8d8d8; }
+  .face-right { fill: #efefef; }
+  @media (prefers-color-scheme: dark) {
+    .line { stroke: #ededed; }
+    .solid { fill: #ededed; }
+    .frame, .dashed { stroke: #666; }
+    .label { fill: #ededed; }
+    .face { stroke: #ededed; }
+    .face-top { fill: #3a3a3a; }
+    .face-left { fill: #141414; }
+    .face-right { fill: #262626; }
+  }
+</style>
+<rect class="frame" x="0" y="0" width="190" height="170" rx="6" /><g transform="translate(71.0 61.0)"><polygon class="face face-top" points="0.0,0.0 24.0,12.0 0.0,24.0 -24.0,12.0" /><polygon class="face face-left" points="-24.0,12.0 0.0,24.0 0.0,48.0 -24.0,36.0" /><polygon class="face face-right" points="24.0,12.0 0.0,24.0 0.0,48.0 24.0,36.0" /><polygon class="face face-top" points="0.0,-24.0 24.0,-12.0 0.0,0.0 -24.0,-12.0" /><polygon class="face face-left" points="-24.0,-12.0 0.0,0.0 0.0,24.0 -24.0,12.0" /><polygon class="face face-right" points="24.0,-12.0 0.0,0.0 0.0,24.0 24.0,12.0" /><polygon class="face face-top" points="24.0,12.0 48.0,24.0 24.0,36.0 0.0,24.0" /><polygon class="face face-left" points="0.0,24.0 24.0,36.0 24.0,60.0 0.0,48.0" /><polygon class="face face-right" points="48.0,24.0 24.0,36.0 24.0,60.0 48.0,48.0" /><polygon class="face face-top" points="48.0,24.0 72.0,36.0 48.0,48.0 24.0,36.0" /><polygon class="face face-left" points="24.0,36.0 48.0,48.0 48.0,72.0 24.0,60.0" /><polygon class="face face-right" points="72.0,36.0 48.0,48.0 48.0,72.0 72.0,60.0" /><polygon class="face face-top" points="48.0,0.0 72.0,12.0 48.0,24.0 24.0,12.0" /><polygon class="face face-left" points="24.0,12.0 48.0,24.0 48.0,48.0 24.0,36.0" /><polygon class="face face-right" points="72.0,12.0 48.0,24.0 48.0,48.0 72.0,36.0" /></g>
+</svg>

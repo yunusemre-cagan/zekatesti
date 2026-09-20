@@ -20,7 +20,7 @@ export const CATEGORY_LABELS: Record<QuestionCategory, string> = {
   processing_speed: "İşlemleme Hızı",
   odd_one_out: "Farklı Olanı Bul",
   coding_decoding: "Şifre Çözme",
-  cube_folding: "Küp Açınımı",
+  paper_folding: "Kağıt Katlama",
 };
 
 export const QUESTION_TYPE_LABELS: Record<QuestionType, string> = {

@@ -40,7 +40,7 @@ export const QUESTION_CATEGORIES = [
   "processing_speed",
   "odd_one_out",
   "coding_decoding",
-  "cube_folding",
+  "paper_folding",
 ] as const;
 
 export const QUESTION_TYPES = [

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 310 140" width="310" height="140">
+<style>
+  .line { stroke: #1a1a1a; fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .solid { fill: #1a1a1a; stroke: none; }
+  .frame { stroke: #b0b0b0; fill: none; stroke-width: 2; }
+  .dashed { stroke: #b0b0b0; fill: none; stroke-width: 2; stroke-dasharray: 6 6; }
+  .label { fill: #1a1a1a; font-family: system-ui, sans-serif; font-size: 34px; text-anchor: middle; }
+  /* Küp yüzleri: dolgu, arkadaki küplerin kenarlarını gizler (derinlik algısı için üç ton). */
+  .face { stroke: #1a1a1a; stroke-width: 2.5; stroke-linejoin: round; }
+  .face-top { fill: #ffffff; }
+  .face-left { fill: #d8d8d8; }
+  .face-right { fill: #efefef; }
+  @media (prefers-color-scheme: dark) {
+    .line { stroke: #ededed; }
+    .solid { fill: #ededed; }
+    .frame, .dashed { stroke: #666; }
+    .label { fill: #ededed; }
+    .face { stroke: #ededed; }
+    .face-top { fill: #3a3a3a; }
+    .face-left { fill: #141414; }
+    .face-right { fill: #262626; }
+  }
+</style>
+<rect class="frame" x="0" y="10" width="120" height="120" rx="4" /><line class="dashed" x1="60" y1="10" x2="60" y2="130" /><line class="dashed" x1="0" y1="70" x2="120" y2="70" /><path class="line" d="M 123 70 L 147 70 M 139 62 L 147 70 L 139 78" /><rect class="frame" x="162" y="10" width="60" height="60" rx="4" /><circle class="solid" cx="192" cy="40" r="8" />
+</svg>

@@ -136,7 +136,7 @@ Soru puanı hiçbir zaman negatife düşmez.
 | 6 | Çalışma belleği | 3 | Tersten, aynı sırada, sıralayarak; artan uzunluk |
 | 7 | Problem çözme | 3 | Birden fazla kuralın eşzamanlı uygulandığı özgün problemler |
 | 8 | İşlemleme hızı | 2 | Sembol-rakam kodlama, benzer şekli bulma (8–10 madde, süreli) |
-| 9 | **Ek öneriler** | 6 | Farklı olanı bul (2), Harf/sayı şifreleme (2), Küp açınımı / kağıt katlama (2) |
+| 9 | **Ek öneriler** | 6 | Farklı olanı bul (2), Şifre çözme (2), Kağıt katlama (2) |
 
 Her soruya çözüm açıklaması (`explanation`) yazılacaktır.
 

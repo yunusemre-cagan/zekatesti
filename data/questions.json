@@ -1,6 +1,6 @@
 [
   {
-    "id": "numeric-pattern-01",
+    "id": "sayisal-01",
     "type": "single_choice",
     "category": "numeric_pattern",
     "difficulty": 1,
@@ -8,27 +8,195 @@
     "explanation": "Ardışık farklar 4, 6, 8 şeklinde ikişer artıyor; sıradaki fark 10 olduğundan 20 + 10 = 30. (Ayrıca her terim n × (n + 1): 1×2, 2×3, 3×4, 4×5, 5×6.)",
     "active": true,
     "options": [
-      {
-        "id": "a",
-        "text": "26"
-      },
-      {
-        "id": "b",
-        "text": "28"
-      },
-      {
-        "id": "c",
-        "text": "30"
-      },
-      {
-        "id": "d",
-        "text": "32"
-      }
+      { "id": "a", "text": "26" },
+      { "id": "b", "text": "28" },
+      { "id": "c", "text": "30" },
+      { "id": "d", "text": "32" }
     ],
     "correctOptionId": "c"
   },
   {
-    "id": "verbal-analogy-01",
+    "id": "sayisal-02",
+    "type": "single_choice",
+    "category": "numeric_pattern",
+    "difficulty": 1,
+    "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n1 → 1 → 2 → 3 → 5 → 8 → ?",
+    "explanation": "Her terim, kendisinden önceki iki terimin toplamıdır (Fibonacci): 5 + 8 = 13.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "11" },
+      { "id": "b", "text": "12" },
+      { "id": "c", "text": "13" },
+      { "id": "d", "text": "16" }
+    ],
+    "correctOptionId": "c"
+  },
+  {
+    "id": "sayisal-03",
+    "type": "single_choice",
+    "category": "numeric_pattern",
+    "difficulty": 2,
+    "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n5 → 2 → 10 → 4 → 20 → 8 → 40 → ?",
+    "explanation": "Dizi iç içe geçmiş iki diziden oluşur. Tek sıradakiler 5, 10, 20, 40 (ikiye katlanır); çift sıradakiler 2, 4, 8, ? (yine ikiye katlanır). Sıradaki terim 8 × 2 = 16'dır.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "12" },
+      { "id": "b", "text": "16" },
+      { "id": "c", "text": "20" },
+      { "id": "d", "text": "80" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "sayisal-04",
+    "type": "single_choice",
+    "category": "numeric_pattern",
+    "difficulty": 3,
+    "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n7 → 14 → 10 → 20 → 16 → 32 → ?",
+    "explanation": "İşlemler sırayla değişiyor: ×2, −4, ×2, −4, ×2 … Son terim 32 olduğuna göre sıradaki işlem çıkarmadır: 32 − 4 = 28.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "26" },
+      { "id": "b", "text": "28" },
+      { "id": "c", "text": "36" },
+      { "id": "d", "text": "64" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "matris-01",
+    "type": "single_choice",
+    "category": "visual_matrix",
+    "difficulty": 1,
+    "prompt": "Matristeki boş hücreye hangi şekil gelmelidir?",
+    "promptImage": "/questions/matris-01/matris.svg",
+    "explanation": "Satırlar şekli belirler (daire, kare, üçgen), sütunlar adedi belirler (1, 2, 3). Eksik hücre üçüncü satır ve üçüncü sütunda olduğundan üç üçgen olmalıdır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/matris-01/a.svg" },
+      { "id": "b", "image": "/questions/matris-01/b.svg" },
+      { "id": "c", "image": "/questions/matris-01/c.svg" },
+      { "id": "d", "image": "/questions/matris-01/d.svg" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "matris-02",
+    "type": "single_choice",
+    "category": "visual_matrix",
+    "difficulty": 2,
+    "prompt": "Matristeki boş hücreye hangi şekil gelmelidir?",
+    "promptImage": "/questions/matris-02/matris.svg",
+    "explanation": "Her sütunda ok 45° saat yönünde döner (yukarı → çapraz → sağa), her satırda alttaki nokta sayısı bir artar (1, 2, 3). Eksik hücrede sağa bakan ok ve üç nokta bulunmalıdır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/matris-02/a.svg" },
+      { "id": "b", "image": "/questions/matris-02/b.svg" },
+      { "id": "c", "image": "/questions/matris-02/c.svg" },
+      { "id": "d", "image": "/questions/matris-02/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "matris-03",
+    "type": "single_choice",
+    "category": "visual_matrix",
+    "difficulty": 2,
+    "prompt": "Matristeki boş hücreye hangi şekil gelmelidir?",
+    "promptImage": "/questions/matris-03/matris.svg",
+    "explanation": "Şeklin kenar sayısı hem sağa doğru hem aşağı doğru birer artar: ilk hücre üçgen (3 kenar), eksik hücre ise 3 + 2 + 2 = 7 kenarlı olmalıdır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/matris-03/a.svg" },
+      { "id": "b", "image": "/questions/matris-03/b.svg" },
+      { "id": "c", "image": "/questions/matris-03/c.svg" },
+      { "id": "d", "image": "/questions/matris-03/d.svg" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "matris-04",
+    "type": "single_choice",
+    "category": "visual_matrix",
+    "difficulty": 3,
+    "prompt": "Matristeki boş hücreye hangi şekil gelmelidir?",
+    "promptImage": "/questions/matris-04/matris.svg",
+    "explanation": "Her satırda üçüncü hücre, ilk iki hücrenin birleşiminden ortak noktaların çıkarılmasıyla elde edilir: yalnızca tek bir hücrede bulunan noktalar kalır, iki hücrede birden bulunanlar silinir. Son satırda sağ üst ve sağ alt noktalar kalır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/matris-04/a.svg" },
+      { "id": "b", "image": "/questions/matris-04/b.svg" },
+      { "id": "c", "image": "/questions/matris-04/c.svg" },
+      { "id": "d", "image": "/questions/matris-04/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "mantik-01",
+    "type": "single_choice",
+    "category": "logical_deduction",
+    "difficulty": 1,
+    "prompt": "\"Yağmur yağarsa maç iptal edilir.\" Maçın iptal edilmediği biliniyor.\n\nBuna göre hangisi kesinlikle doğrudur?",
+    "explanation": "Kural \"yağmur → iptal\" biçimindedir. İptal gerçekleşmediğine göre yağmur da yağmamıştır. Yağmurun yağmadığı durumda maçın ne olacağı kuralda belirtilmediği için diğer seçenekler kesin değildir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Yağmur yağmamıştır." },
+      { "id": "b", "text": "Yağmur yağmıştır." },
+      { "id": "c", "text": "Maç ertelenmiştir." },
+      { "id": "d", "text": "Hiçbiri kesin değildir." }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "mantik-02",
+    "type": "single_choice",
+    "category": "logical_deduction",
+    "difficulty": 2,
+    "prompt": "A, B'den uzundur. C, A'dan kısadır. B, D'den uzundur.\n\nBuna göre hangisi kesinlikle doğrudur?",
+    "explanation": "A hem B'den hem C'den uzundur; B de D'den uzun olduğu için A > B > D olur. Yani A hepsinden uzundur. C'nin B ve D ile karşılaştırması verilmediğinden diğer seçenekler kesin değildir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "A, hepsinden uzundur." },
+      { "id": "b", "text": "C, B'den uzundur." },
+      { "id": "c", "text": "D, hepsinden kısadır." },
+      { "id": "d", "text": "C, D'den kısadır." }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "mantik-03",
+    "type": "single_choice",
+    "category": "logical_deduction",
+    "difficulty": 2,
+    "prompt": "Bütün pilotlar iyi görür. Hiçbir iyi gören kişi bu ilacı kullanamaz.\n\nBuna göre hangisi kesinlikle doğrudur?",
+    "explanation": "Pilotların tamamı iyi görenler kümesindedir ve iyi görenlerin hiçbiri ilacı kullanamaz. Dolayısıyla hiçbir pilot bu ilacı kullanamaz.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Bazı pilotlar bu ilacı kullanabilir." },
+      { "id": "b", "text": "Hiçbir pilot bu ilacı kullanamaz." },
+      { "id": "c", "text": "İlacı kullananların hepsi pilottur." },
+      { "id": "d", "text": "İyi gören herkes pilottur." }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "mantik-04",
+    "type": "single_choice",
+    "category": "logical_deduction",
+    "difficulty": 3,
+    "prompt": "Beş koşucu yarışı şu bilgilerle bitirdi:\n• Deniz, Ece'den önce bitirdi.\n• Can sonuncu oldu.\n• Ece, Berk'ten hemen sonra bitirdi.\n• Ayla birinci değildi.\n\nBuna göre yarışı kim birinci bitirmiştir?",
+    "explanation": "Can sonuncudur ve Ayla birinci değildir; geriye Deniz, Berk ve Ece kalır. Ece, Berk'ten hemen sonra bitirdiği için birinci olamaz. Berk birinci olsaydı Ece ikinci olurdu ve Deniz, Ece'den önce bitiremezdi. Dolayısıyla birinci Deniz'dir (sıra: Deniz, Berk, Ece, Ayla, Can).",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Berk" },
+      { "id": "b", "text": "Deniz" },
+      { "id": "c", "text": "Ece" },
+      { "id": "d", "text": "Ayla" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "analoji-01",
     "type": "single_choice",
     "category": "verbal_analogy",
     "difficulty": 1,
@@ -36,178 +204,374 @@
     "explanation": "Kitabın kullanım biçimi okumaktır; müziğin kullanım biçimi ise dinlemektir. Diğer şıklar müzikle ilişkili nesne veya kişilerdir, eylem değildir.",
     "active": true,
     "options": [
-      {
-        "id": "a",
-        "text": "Nota"
-      },
-      {
-        "id": "b",
-        "text": "Dinlemek"
-      },
-      {
-        "id": "c",
-        "text": "Şarkıcı"
-      },
-      {
-        "id": "d",
-        "text": "Enstrüman"
-      }
+      { "id": "a", "text": "Nota" },
+      { "id": "b", "text": "Dinlemek" },
+      { "id": "c", "text": "Şarkıcı" },
+      { "id": "d", "text": "Enstrüman" }
     ],
     "correctOptionId": "b"
   },
   {
-    "id": "working-memory-01",
+    "id": "analoji-02",
+    "type": "single_choice",
+    "category": "verbal_analogy",
+    "difficulty": 1,
+    "prompt": "Tekerlek : Otomobil = Klavye : ?",
+    "explanation": "Tekerlek otomobilin bir parçasıdır; klavye de bilgisayarın bir parçasıdır. Diğer şıklar klavyenin parçası, onunla yapılan eylem veya üzerinde durduğu eşyadır.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Tuş" },
+      { "id": "b", "text": "Yazmak" },
+      { "id": "c", "text": "Bilgisayar" },
+      { "id": "d", "text": "Masa" }
+    ],
+    "correctOptionId": "c"
+  },
+  {
+    "id": "analoji-03",
+    "type": "single_choice",
+    "category": "verbal_analogy",
+    "difficulty": 2,
+    "prompt": "Ilık : Sıcak = Serin : ?",
+    "explanation": "Ilık, sıcağın daha hafif derecesidir; serin de soğuğun daha hafif derecesidir. İlişki bir derece ilişkisidir, nesne ilişkisi değildir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Soğuk" },
+      { "id": "b", "text": "Buz" },
+      { "id": "c", "text": "Rüzgâr" },
+      { "id": "d", "text": "Kış" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "analoji-04",
+    "type": "single_choice",
+    "category": "verbal_analogy",
+    "difficulty": 2,
+    "prompt": "Susuzluk : Su = Yorgunluk : ?",
+    "explanation": "Susuzluğu gideren şey sudur; yorgunluğu gideren şey ise uykudur. Diğer şıklar uykuyla ilişkili yer, zaman veya geçici bir uyarıcıdır; ihtiyacın kendisini karşılamaz.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Yatak" },
+      { "id": "b", "text": "Uyku" },
+      { "id": "c", "text": "Gece" },
+      { "id": "d", "text": "Kahve" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "uzamsal-01",
+    "type": "single_choice",
+    "category": "spatial_reasoning",
+    "difficulty": 2,
+    "prompt": "Yukarıdaki şekil kâğıt üzerinde döndürüldüğünde aşağıdakilerden hangisi elde edilir? (Şekil ters çevrilmez, yalnızca döndürülür.)",
+    "promptImage": "/questions/uzamsal-01/soru.svg",
+    "explanation": "Yalnızca B şıkkı şeklin 90° döndürülmüş halidir. Diğer şıklar şeklin ayna görüntüsüdür: bayrağın üçgen çentiği ile direğin ucundaki nokta, döndürmeyle karşı tarafa geçmez.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/uzamsal-01/a.svg" },
+      { "id": "b", "image": "/questions/uzamsal-01/b.svg" },
+      { "id": "c", "image": "/questions/uzamsal-01/c.svg" },
+      { "id": "d", "image": "/questions/uzamsal-01/d.svg" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "uzamsal-02",
+    "type": "multi_choice",
+    "category": "spatial_reasoning",
+    "difficulty": 3,
+    "prompt": "Yukarıdaki şekil kâğıt üzerinde döndürüldüğünde aşağıdakilerden hangileri elde edilir? (Şekil ters çevrilmez, yalnızca döndürülür. Birden fazla şık işaretleyebilirsiniz.)",
+    "promptImage": "/questions/uzamsal-02/soru.svg",
+    "explanation": "A şıkkı 90°, C şıkkı 270° döndürülmüş halidir. B ve D şıkları ise şeklin ayna görüntüsüdür; L biçimindeki şeklin ayağı, döndürmeyle karşı tarafa geçmez.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/uzamsal-02/a.svg" },
+      { "id": "b", "image": "/questions/uzamsal-02/b.svg" },
+      { "id": "c", "image": "/questions/uzamsal-02/c.svg" },
+      { "id": "d", "image": "/questions/uzamsal-02/d.svg" }
+    ],
+    "correctOptionIds": ["a", "c"]
+  },
+  {
+    "id": "uzamsal-03",
+    "type": "single_choice",
+    "category": "spatial_reasoning",
+    "difficulty": 2,
+    "prompt": "Yukarıdaki cisim döndürüldüğünde aşağıdakilerden hangisi elde edilir?",
+    "promptImage": "/questions/uzamsal-03/soru.svg",
+    "explanation": "Cisim, tamamı aynı düzlemde bulunan üç küpten oluşur. A şıkkı bu cismin 90° döndürülmüş halidir. B'de küplerden biri yukarı çıkmış, C'de dört küp var, D'de ise yalnızca iki küp var.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/uzamsal-03/a.svg" },
+      { "id": "b", "image": "/questions/uzamsal-03/b.svg" },
+      { "id": "c", "image": "/questions/uzamsal-03/c.svg" },
+      { "id": "d", "image": "/questions/uzamsal-03/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "uzamsal-04",
+    "type": "single_choice",
+    "category": "spatial_reasoning",
+    "difficulty": 3,
+    "prompt": "Yukarıdaki cisim döndürüldüğünde aşağıdakilerden hangisi elde edilir?",
+    "promptImage": "/questions/uzamsal-04/soru.svg",
+    "explanation": "Cisim, üç küplük bir sıra ve sıranın bir ucunda yükselen dördüncü küpten oluşur. A şıkkı bu cismin 90° döndürülmüş halidir. B'de yükselen küp ortadadır, C'de yükselen küp yoktur, D'de ise beş küp vardır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/uzamsal-04/a.svg" },
+      { "id": "b", "image": "/questions/uzamsal-04/b.svg" },
+      { "id": "c", "image": "/questions/uzamsal-04/c.svg" },
+      { "id": "d", "image": "/questions/uzamsal-04/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "bellek-01",
     "type": "memory_sequence",
     "category": "working_memory",
     "difficulty": 2,
     "prompt": "Ekranda sırayla rakamlar gösterilecek. Rakamları aklınızda tutun, ardından TERS sırayla yazın.",
     "explanation": "Gösterilen dizi 7-2-9-4-1-8 idi; tersten yazılışı 8-1-4-9-2-7.",
     "active": true,
-    "sequence": [
-      "7",
-      "2",
-      "9",
-      "4",
-      "1",
-      "8"
-    ],
+    "sequence": ["7", "2", "9", "4", "1", "8"],
     "itemDisplayMs": 1000,
     "transform": "reverse"
   },
   {
-    "id": "processing-speed-01",
+    "id": "bellek-02",
+    "type": "memory_sequence",
+    "category": "working_memory",
+    "difficulty": 2,
+    "prompt": "Ekranda sırayla harfler gösterilecek. Harfleri GÖSTERİLDİĞİ SIRAYLA yazın.",
+    "explanation": "Gösterilen dizi K-M-B-T-R-Z-L idi ve aynı sırayla yazılması gerekiyordu.",
+    "active": true,
+    "sequence": ["K", "M", "B", "T", "R", "Z", "L"],
+    "itemDisplayMs": 900,
+    "transform": "same"
+  },
+  {
+    "id": "bellek-03",
+    "type": "memory_sequence",
+    "category": "working_memory",
+    "difficulty": 3,
+    "prompt": "Ekranda sırayla rakamlar gösterilecek. Rakamları aklınızda tutun, ardından KÜÇÜKTEN BÜYÜĞE sıralayarak yazın.",
+    "explanation": "Gösterilen rakamlar 5-3-9-1-7-4 idi; küçükten büyüğe sıralanışı 1-3-4-5-7-9.",
+    "active": true,
+    "sequence": ["5", "3", "9", "1", "7", "4"],
+    "itemDisplayMs": 1000,
+    "transform": "sorted"
+  },
+  {
+    "id": "problem-01",
+    "type": "single_choice",
+    "category": "problem_solving",
+    "difficulty": 2,
+    "prompt": "3 makine, 3 saatte 3 parça üretiyor.\n\nAynı hızla çalışan 9 makine, 9 parçayı kaç saatte üretir?",
+    "explanation": "3 makine 3 saatte 3 parça üretiyorsa bir makine bir parçayı 3 saatte üretir. 9 makinenin her biri aynı anda birer parça ürettiğinde 9 parça yine 3 saatte tamamlanır: makine sayısı ile parça sayısı birlikte arttığı için süre değişmez.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "1 saat" },
+      { "id": "b", "text": "3 saat" },
+      { "id": "c", "text": "9 saat" },
+      { "id": "d", "text": "27 saat" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "problem-02",
+    "type": "single_choice",
+    "category": "problem_solving",
+    "difficulty": 3,
+    "prompt": "Bir rafta soldan sağa dört kitap dizilecek: matematik, roman, şiir, tarih.\n• Tarih en sağdadır.\n• Roman ile şiir yan yanadır.\n• Matematik, romanın solundadır.\n\nSoldan ikinci sıraya hangi kitap gelir?",
+    "explanation": "Tarih 4. sıradadır, geriye ilk üç sıra kalır. Roman ile şiirin yan yana olması için bu ikili 1-2 veya 2-3 sıralarını kaplar. Matematik romanın solunda olduğundan roman 1. sırada olamaz; bu durumda matematik 1., roman 2., şiir 3. sırada olur. Yani soldan ikinci kitap romandır.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Matematik" },
+      { "id": "b", "text": "Roman" },
+      { "id": "c", "text": "Şiir" },
+      { "id": "d", "text": "Tarih" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "problem-03",
+    "type": "single_choice",
+    "category": "problem_solving",
+    "difficulty": 3,
+    "prompt": "Görünüşte birbirinin aynı 9 top var; biri diğerlerinden ağır. Elinizde yalnızca iki kefeli bir terazi var.\n\nAğır topu bulmayı garanti eden en az tartım sayısı kaçtır?",
+    "explanation": "Toplar üçerli üç gruba ayrılır. Birinci tartımda iki grup karşılaştırılır: denge varsa ağır top tartılmayan gruptadır, yoksa ağır basan gruptadır. İkinci tartımda o grubun iki topu karşılaştırılır; denge varsa ağır top tartılmayandır. Böylece iki tartım her durumda yeter.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "1" },
+      { "id": "b", "text": "2" },
+      { "id": "c", "text": "3" },
+      { "id": "d", "text": "4" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "hiz-01",
     "type": "speed_task",
     "category": "processing_speed",
     "difficulty": 2,
-    "prompt": "Anahtar tabloya göre her sembolün karşılığı olan rakamı seçin. Süre dolmadan olabildiğince çok maddeyi doğru yanıtlayın.",
+    "prompt": "Anahtar tabloya göre her sembolün karşılığı olan rakamı seçin. Süre dolmadan olabildiğince çok maddeyi doğru yanıtlayın; yanlış işaretler puan düşürür.",
     "explanation": "Her sembol anahtar tablodaki rakamla eşleşir: ★=1, ●=2, ▲=3, ■=4, ◆=5.",
     "active": true,
     "timeLimitSec": 45,
     "legend": [
-      {
-        "symbol": {
-          "text": "★"
-        },
-        "label": "1"
-      },
-      {
-        "symbol": {
-          "text": "●"
-        },
-        "label": "2"
-      },
-      {
-        "symbol": {
-          "text": "▲"
-        },
-        "label": "3"
-      },
-      {
-        "symbol": {
-          "text": "■"
-        },
-        "label": "4"
-      },
-      {
-        "symbol": {
-          "text": "◆"
-        },
-        "label": "5"
-      }
+      { "symbol": { "text": "★" }, "label": "1" },
+      { "symbol": { "text": "●" }, "label": "2" },
+      { "symbol": { "text": "▲" }, "label": "3" },
+      { "symbol": { "text": "■" }, "label": "4" },
+      { "symbol": { "text": "◆" }, "label": "5" }
     ],
     "options": [
-      {
-        "id": "1",
-        "text": "1"
-      },
-      {
-        "id": "2",
-        "text": "2"
-      },
-      {
-        "id": "3",
-        "text": "3"
-      },
-      {
-        "id": "4",
-        "text": "4"
-      },
-      {
-        "id": "5",
-        "text": "5"
-      }
+      { "id": "1", "text": "1" },
+      { "id": "2", "text": "2" },
+      { "id": "3", "text": "3" },
+      { "id": "4", "text": "4" },
+      { "id": "5", "text": "5" }
     ],
     "items": [
-      {
-        "id": "i1",
-        "stimulus": {
-          "text": "▲"
-        },
-        "correctOptionId": "3"
-      },
-      {
-        "id": "i2",
-        "stimulus": {
-          "text": "★"
-        },
-        "correctOptionId": "1"
-      },
-      {
-        "id": "i3",
-        "stimulus": {
-          "text": "◆"
-        },
-        "correctOptionId": "5"
-      },
-      {
-        "id": "i4",
-        "stimulus": {
-          "text": "●"
-        },
-        "correctOptionId": "2"
-      },
-      {
-        "id": "i5",
-        "stimulus": {
-          "text": "■"
-        },
-        "correctOptionId": "4"
-      },
-      {
-        "id": "i6",
-        "stimulus": {
-          "text": "▲"
-        },
-        "correctOptionId": "3"
-      },
-      {
-        "id": "i7",
-        "stimulus": {
-          "text": "◆"
-        },
-        "correctOptionId": "5"
-      },
-      {
-        "id": "i8",
-        "stimulus": {
-          "text": "★"
-        },
-        "correctOptionId": "1"
-      },
-      {
-        "id": "i9",
-        "stimulus": {
-          "text": "■"
-        },
-        "correctOptionId": "4"
-      },
-      {
-        "id": "i10",
-        "stimulus": {
-          "text": "●"
-        },
-        "correctOptionId": "2"
-      }
+      { "id": "i1", "stimulus": { "text": "▲" }, "correctOptionId": "3" },
+      { "id": "i2", "stimulus": { "text": "★" }, "correctOptionId": "1" },
+      { "id": "i3", "stimulus": { "text": "◆" }, "correctOptionId": "5" },
+      { "id": "i4", "stimulus": { "text": "●" }, "correctOptionId": "2" },
+      { "id": "i5", "stimulus": { "text": "■" }, "correctOptionId": "4" },
+      { "id": "i6", "stimulus": { "text": "▲" }, "correctOptionId": "3" },
+      { "id": "i7", "stimulus": { "text": "◆" }, "correctOptionId": "5" },
+      { "id": "i8", "stimulus": { "text": "★" }, "correctOptionId": "1" },
+      { "id": "i9", "stimulus": { "text": "■" }, "correctOptionId": "4" },
+      { "id": "i10", "stimulus": { "text": "●" }, "correctOptionId": "2" }
     ]
+  },
+  {
+    "id": "hiz-02",
+    "type": "speed_task",
+    "category": "processing_speed",
+    "difficulty": 2,
+    "prompt": "Ekranda gösterilen şeklin aynısını şıklardan seçin. Şekiller birbirine benzer; hızlı ama dikkatli bakın. Yanlış işaretler puan düşürür.",
+    "explanation": "Şekiller yalnızca tek bir ayrıntıda farklıdır: düz kare, köşesi kesik kare, üst kenarında çentik olan kare, köşegenli kare ve ortasında nokta olan kare.",
+    "active": true,
+    "timeLimitSec": 45,
+    "options": [
+      { "id": "a", "image": "/questions/hiz-02/a.svg" },
+      { "id": "b", "image": "/questions/hiz-02/b.svg" },
+      { "id": "c", "image": "/questions/hiz-02/c.svg" },
+      { "id": "d", "image": "/questions/hiz-02/d.svg" },
+      { "id": "e", "image": "/questions/hiz-02/e.svg" }
+    ],
+    "items": [
+      { "id": "i1", "stimulus": { "image": "/questions/hiz-02/c.svg" }, "correctOptionId": "c" },
+      { "id": "i2", "stimulus": { "image": "/questions/hiz-02/a.svg" }, "correctOptionId": "a" },
+      { "id": "i3", "stimulus": { "image": "/questions/hiz-02/e.svg" }, "correctOptionId": "e" },
+      { "id": "i4", "stimulus": { "image": "/questions/hiz-02/b.svg" }, "correctOptionId": "b" },
+      { "id": "i5", "stimulus": { "image": "/questions/hiz-02/d.svg" }, "correctOptionId": "d" },
+      { "id": "i6", "stimulus": { "image": "/questions/hiz-02/c.svg" }, "correctOptionId": "c" },
+      { "id": "i7", "stimulus": { "image": "/questions/hiz-02/b.svg" }, "correctOptionId": "b" },
+      { "id": "i8", "stimulus": { "image": "/questions/hiz-02/e.svg" }, "correctOptionId": "e" },
+      { "id": "i9", "stimulus": { "image": "/questions/hiz-02/d.svg" }, "correctOptionId": "d" },
+      { "id": "i10", "stimulus": { "image": "/questions/hiz-02/a.svg" }, "correctOptionId": "a" }
+    ]
+  },
+  {
+    "id": "farkli-01",
+    "type": "single_choice",
+    "category": "odd_one_out",
+    "difficulty": 1,
+    "prompt": "Aşağıdakilerden hangisi diğerlerinden farklıdır?",
+    "explanation": "Elma, armut ve muz meyvedir; havuç ise sebzedir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "Elma" },
+      { "id": "b", "text": "Armut" },
+      { "id": "c", "text": "Havuç" },
+      { "id": "d", "text": "Muz" }
+    ],
+    "correctOptionId": "c"
+  },
+  {
+    "id": "farkli-02",
+    "type": "single_choice",
+    "category": "odd_one_out",
+    "difficulty": 2,
+    "prompt": "Aşağıdaki sayılardan hangisi diğerlerinden farklıdır?\n\n27 — 64 — 100 — 125",
+    "explanation": "27 = 3³, 64 = 4³ ve 125 = 5³ tam küptür. 100 ise tam kare (10²) olmasına rağmen tam küp değildir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "27" },
+      { "id": "b", "text": "64" },
+      { "id": "c", "text": "100" },
+      { "id": "d", "text": "125" }
+    ],
+    "correctOptionId": "c"
+  },
+  {
+    "id": "sifre-01",
+    "type": "single_choice",
+    "category": "coding_decoding",
+    "difficulty": 2,
+    "prompt": "Bir şifrede:\nMASA = 4131\nKASA = 2131\n\nBuna göre KAMA nasıl yazılır?",
+    "explanation": "İki kelimenin karşılaştırılmasından her harfin bir rakama karşılık geldiği görülür: M=4, A=1, S=3, K=2. Buna göre K-A-M-A = 2-1-4-1.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "2141" },
+      { "id": "b", "text": "2114" },
+      { "id": "c", "text": "4121" },
+      { "id": "d", "text": "1241" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "sifre-02",
+    "type": "single_choice",
+    "category": "coding_decoding",
+    "difficulty": 1,
+    "prompt": "Bir şifrede ELMA kelimesi AMLE biçiminde yazılıyor.\n\nBuna göre ARMUT nasıl yazılır?",
+    "explanation": "Kural, harflerin sırasını tersine çevirmektir: ELMA → AMLE. Aynı kuralla ARMUT → TUMRA olur.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "TUMRA" },
+      { "id": "b", "text": "TUMAR" },
+      { "id": "c", "text": "ATUMR" },
+      { "id": "d", "text": "RAMUT" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "katlama-01",
+    "type": "single_choice",
+    "category": "paper_folding",
+    "difficulty": 2,
+    "prompt": "Kare bir kâğıt ortadan ikiye katlanıyor ve katlı haldeyken tek bir delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
+    "promptImage": "/questions/katlama-01/soru.svg",
+    "explanation": "Kâğıt dikey eksende katlandığı için delik iki kattan birden geçer. Açıldığında delikler, katlama çizgisine göre simetrik iki noktada ve aynı yükseklikte olur.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/katlama-01/a.svg" },
+      { "id": "b", "image": "/questions/katlama-01/b.svg" },
+      { "id": "c", "image": "/questions/katlama-01/c.svg" },
+      { "id": "d", "image": "/questions/katlama-01/d.svg" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "katlama-02",
+    "type": "single_choice",
+    "category": "paper_folding",
+    "difficulty": 3,
+    "prompt": "Kare bir kâğıt önce dikey, sonra yatay olarak katlanıyor ve katlı haldeyken tek bir delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
+    "promptImage": "/questions/katlama-02/soru.svg",
+    "explanation": "İki katlama dört kat oluşturur ve tek delik dört kattan birden geçer. Açıldığında delikler, her çeyrekte birer tane olmak üzere dört noktada simetrik biçimde belirir.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/katlama-02/a.svg" },
+      { "id": "b", "image": "/questions/katlama-02/b.svg" },
+      { "id": "c", "image": "/questions/katlama-02/c.svg" },
+      { "id": "d", "image": "/questions/katlama-02/d.svg" }
+    ],
+    "correctOptionId": "c"
   }
 ]
