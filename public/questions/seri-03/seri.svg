@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 104" width="560" height="104">
+<style>
+  .line { stroke: #1a1a1a; fill: none; stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+  .solid { fill: #1a1a1a; stroke: none; }
+  .frame { stroke: #b0b0b0; fill: none; stroke-width: 2; }
+  .dashed { stroke: #b0b0b0; fill: none; stroke-width: 2; stroke-dasharray: 6 6; }
+  .label { fill: #1a1a1a; font-family: system-ui, sans-serif; font-size: 34px; text-anchor: middle; }
+  /* Küp yüzleri: dolgu, arkadaki küplerin kenarlarını gizler (derinlik algısı için üç ton). */
+  .face { stroke: #1a1a1a; stroke-width: 2.5; stroke-linejoin: round; }
+  .face-top { fill: #ffffff; }
+  .face-left { fill: #d8d8d8; }
+  .face-right { fill: #efefef; }
+  @media (prefers-color-scheme: dark) {
+    .line { stroke: #ededed; }
+    .solid { fill: #ededed; }
+    .frame, .dashed { stroke: #666; }
+    .label { fill: #ededed; }
+    .face { stroke: #ededed; }
+    .face-top { fill: #3a3a3a; }
+    .face-left { fill: #141414; }
+    .face-right { fill: #262626; }
+  }
+</style>
+<g transform="translate(0 0)"><rect class="frame" x="2" y="2" width="100" height="100" rx="6" /><polygon class="line" points="52.0,16.0 83.2,70.0 20.8,70.0" /><circle class="solid" cx="52" cy="56" r="5" /></g><g transform="translate(114 0)"><rect class="frame" x="2" y="2" width="100" height="100" rx="6" /><polygon class="line" points="52.0,16.0 88.0,52.0 52.0,88.0 16.0,52.0" /><circle class="solid" cx="45" cy="56" r="5" /><circle class="solid" cx="59" cy="56" r="5" /></g><g transform="translate(228 0)"><rect class="frame" x="2" y="2" width="100" height="100" rx="6" /><polygon class="line" points="52.0,16.0 86.2,40.9 73.2,81.1 30.8,81.1 17.8,40.9" /><circle class="solid" cx="38" cy="56" r="5" /><circle class="solid" cx="52" cy="56" r="5" /><circle class="solid" cx="66" cy="56" r="5" /></g><g transform="translate(342 0)"><rect class="frame" x="2" y="2" width="100" height="100" rx="6" /><polygon class="line" points="52.0,16.0 83.2,34.0 83.2,70.0 52.0,88.0 20.8,70.0 20.8,34.0" /><circle class="solid" cx="52" cy="56" r="5" /></g><rect class="frame" x="458" y="2" width="100" height="100" rx="6" /><text class="label" x="508" y="64">?</text>
+</svg>

@@ -784,5 +784,141 @@
       { "id": "d", "text": "5 hamle" }
     ],
     "correctOptionId": "c"
+  },
+  {
+    "id": "hiz-03",
+    "type": "speed_task",
+    "category": "processing_speed",
+    "difficulty": 2,
+    "prompt": "Her maddede bir harf dizisi göreceksiniz. Dizide M harfi VARSA \"Var\", yoksa \"Yok\" seçin. Hızlı ama dikkatli bakın; yanlış işaretler puan düşürür.",
+    "explanation": "Görev, dizide hedef harfi aramaya dayanır. Doğru cevaplar sırasıyla: Var, Yok, Var, Yok, Yok, Var, Var, Yok, Var, Var.",
+    "active": true,
+    "timeLimitSec": 40,
+    "options": [
+      { "id": "v", "text": "Var" },
+      { "id": "y", "text": "Yok" }
+    ],
+    "items": [
+      { "id": "i1", "stimulus": { "text": "K R M T Z" }, "correctOptionId": "v" },
+      { "id": "i2", "stimulus": { "text": "B L K T R" }, "correctOptionId": "y" },
+      { "id": "i3", "stimulus": { "text": "Z M B K L" }, "correctOptionId": "v" },
+      { "id": "i4", "stimulus": { "text": "T K B Z R" }, "correctOptionId": "y" },
+      { "id": "i5", "stimulus": { "text": "N K L T B" }, "correctOptionId": "y" },
+      { "id": "i6", "stimulus": { "text": "R T K M B" }, "correctOptionId": "v" },
+      { "id": "i7", "stimulus": { "text": "M Z T K R" }, "correctOptionId": "v" },
+      { "id": "i8", "stimulus": { "text": "L B N T Z" }, "correctOptionId": "y" },
+      { "id": "i9", "stimulus": { "text": "K B T M N" }, "correctOptionId": "v" },
+      { "id": "i10", "stimulus": { "text": "T M R L B" }, "correctOptionId": "v" }
+    ]
+  },
+  {
+    "id": "hiz-04",
+    "type": "speed_task",
+    "category": "processing_speed",
+    "difficulty": 2,
+    "prompt": "Her maddede iki sayı yan yana gösterilir. Sayılar tamamen AYNIYSA \"Aynı\", tek bir rakamı bile farklıysa \"Farklı\" seçin. Yanlış işaretler puan düşürür.",
+    "explanation": "Görev, iki sayıyı rakam rakam karşılaştırmaya dayanır. Farklı olan maddelerde tek bir rakam değiştirilmiştir; bu yüzden sayılara bütün olarak bakmak yanıltıcıdır.",
+    "active": true,
+    "timeLimitSec": 40,
+    "shuffleOptions": true,
+    "options": [
+      { "id": "a", "text": "Aynı" },
+      { "id": "f", "text": "Farklı" }
+    ],
+    "items": [
+      { "id": "i1", "stimulus": { "text": "4719 — 4719" }, "correctOptionId": "a" },
+      { "id": "i2", "stimulus": { "text": "58302 — 58320" }, "correctOptionId": "f" },
+      { "id": "i3", "stimulus": { "text": "91746 — 91746" }, "correctOptionId": "a" },
+      { "id": "i4", "stimulus": { "text": "30298 — 30928" }, "correctOptionId": "f" },
+      { "id": "i5", "stimulus": { "text": "672415 — 672415" }, "correctOptionId": "a" },
+      { "id": "i6", "stimulus": { "text": "845163 — 845136" }, "correctOptionId": "f" },
+      { "id": "i7", "stimulus": { "text": "20507 — 20507" }, "correctOptionId": "a" },
+      { "id": "i8", "stimulus": { "text": "73894 — 73984" }, "correctOptionId": "f" },
+      { "id": "i9", "stimulus": { "text": "158236 — 158236" }, "correctOptionId": "a" },
+      { "id": "i10", "stimulus": { "text": "409617 — 406917" }, "correctOptionId": "f" }
+    ]
+  },
+  {
+    "id": "farkli-03",
+    "type": "single_choice",
+    "category": "odd_one_out",
+    "difficulty": 2,
+    "prompt": "Aşağıdaki kelimelerden hangisi diğerlerinden farklıdır?\n\nKAPAK — RADAR — KABAK — ÇİÇEK",
+    "explanation": "KAPAK, RADAR ve KABAK tersten okunduğunda da aynı kalır (palindrom). ÇİÇEK tersten okunduğunda KEÇİÇ olur, yani aynı kalmaz. Ayrım anlamla değil, harflerin dizilişiyle ilgilidir.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "KAPAK" },
+      { "id": "b", "text": "RADAR" },
+      { "id": "c", "text": "KABAK" },
+      { "id": "d", "text": "ÇİÇEK" }
+    ],
+    "correctOptionId": "d"
+  },
+  {
+    "id": "farkli-04",
+    "type": "single_choice",
+    "category": "odd_one_out",
+    "difficulty": 3,
+    "prompt": "Aşağıdaki sayılardan hangisi diğerlerinden farklıdır?\n\n27 — 64 — 125 — 216",
+    "explanation": "Dördü de tam küptür (3³, 4³, 5³, 6³), bu yüzden ayrım küp olmakta değildir. 64 aynı zamanda tam karedir (8²); diğer üçü tam kare değildir. Bu soruda ilk bulunan ortak özellik yanıltıcıdır, ikinci bir özellik aranmalıdır.",
+    "active": true,
+    "options": [
+      { "id": "a", "text": "27" },
+      { "id": "b", "text": "64" },
+      { "id": "c", "text": "125" },
+      { "id": "d", "text": "216" }
+    ],
+    "correctOptionId": "b"
+  },
+  {
+    "id": "katlama-04",
+    "type": "single_choice",
+    "category": "paper_folding",
+    "difficulty": 2,
+    "prompt": "Kare bir kâğıt ortadan ikiye katlanıyor ve katlı haldeyken İKİ delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
+    "promptImage": "/questions/katlama-04/soru.svg",
+    "explanation": "Tek katlama iki kat oluşturur; her delik iki kattan birden geçer. İki delik açıldığında toplam dört delik oluşur ve her çift, katlama çizgisine göre simetrik olarak karşılıklı konumlanır. Deliklerin yükseklikleri değişmez.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/katlama-04/a.svg" },
+      { "id": "b", "image": "/questions/katlama-04/b.svg" },
+      { "id": "c", "image": "/questions/katlama-04/c.svg" },
+      { "id": "d", "image": "/questions/katlama-04/d.svg" }
+    ],
+    "correctOptionId": "a"
+  },
+  {
+    "id": "seri-03",
+    "type": "single_choice",
+    "category": "figure_series",
+    "difficulty": 2,
+    "prompt": "Şekil serisi aşağıdaki gibi ilerliyor. Sıradaki kare hangisidir?",
+    "promptImage": "/questions/seri-03/seri.svg",
+    "explanation": "İki kural birlikte işler ama farklı hızlarda. Kenar sayısı her adımda bir artar ve hiç tekrar etmez: üçgen, kare, beşgen, altıgen, yedigen. İçteki nokta sayısı ise 1-2-3 sırasını izler ve üç adımda bir başa döner; dördüncü adımda bir noktaya düştüğü için beşinci adımda iki nokta olur. Yalnızca kenar sayısını takip eden kişi nokta sayısını gözden kaçırır.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/seri-03/a.svg" },
+      { "id": "b", "image": "/questions/seri-03/b.svg" },
+      { "id": "c", "image": "/questions/seri-03/c.svg" },
+      { "id": "d", "image": "/questions/seri-03/d.svg" }
+    ],
+    "correctOptionId": "c"
+  },
+  {
+    "id": "seri-04",
+    "type": "single_choice",
+    "category": "figure_series",
+    "difficulty": 2,
+    "prompt": "Şekil serisi aşağıdaki gibi ilerliyor. Sıradaki kare hangisidir?",
+    "promptImage": "/questions/seri-04/seri.svg",
+    "explanation": "Nokta sayısı her adımda bir artar (1, 2, 3, 4) ve noktaların dolgusu dolu ile boş arasında dönüşümlü değişir. Beşinci adımda beş nokta olmalı ve dolgu yeniden doluya dönmelidir.",
+    "active": true,
+    "options": [
+      { "id": "a", "image": "/questions/seri-04/a.svg" },
+      { "id": "b", "image": "/questions/seri-04/b.svg" },
+      { "id": "c", "image": "/questions/seri-04/c.svg" },
+      { "id": "d", "image": "/questions/seri-04/d.svg" }
+    ],
+    "correctOptionId": "b"
   }
 ]

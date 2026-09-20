@@ -103,7 +103,7 @@ aralığında sınırlanır ve **her zaman tam sayı** olarak gösterilir. Dön�
 `lib/config.ts` içinde tutulur.
 
 **Hız çarpanı:** Her sorunun puanı `beklenen süre / harcanan süre` oranıyla çarpılır (en fazla 1,
-en az 0.5). Beklenen süre zorluğa göre belirlenir (kolay 45 sn, orta 75 sn, zor 120 sn) ve soru
+en az 0.5). Beklenen süre zorluğa göre belirlenir (kolay 15 sn, orta 25 sn, zor 40 sn) ve soru
 bazında `expectedSec` ile değiştirilebilir. İki istisna: hız görevleri (zaten kendi süre sınırı var)
 ve bellek sorusunda dizinin gösterildiği süre. Bir soruda kaydedilen süre en fazla 5 dakikadır;
 böylece test açık unutulursa tek bir soru tüm sonucu bozmaz.

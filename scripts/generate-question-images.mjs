@@ -306,6 +306,56 @@ function series2Cell(step) {
   return arrowCell(step * 60, (step % 3) + 1);
 }
 
+/**
+ * seri-03: İki kural birlikte işler ve periyotları farklıdır.
+ *  - Şeklin kenar sayısı her adımda bir artar (üçgen → kare → beşgen → …), yani hiç tekrar etmez.
+ *  - İçindeki nokta sayısı 1-2-3 sırasını izler, yani üç adımda bir tekrar eder.
+ *
+ * İkinci kural için dönüş açısı kullanılmadı: düzgün çokgenlerde küçük açı farkları gözle
+ * ayırt edilemediği için soru zekâ değil görme keskinliği ölçmeye başlardı.
+ */
+function series3Cell(step) {
+  return series3Content(3 + step, (step % 3) + 1);
+}
+
+function series3Content(sides, dotCount) {
+  const center = SERIES_CELL / 2;
+  const shape = polygon(center, center, 36, sides);
+  const dots = Array.from({ length: dotCount }, (_, index) =>
+    circle(center + (index - (dotCount - 1) / 2) * 14, center + 4, 5, "solid"),
+  ).join("");
+  return `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${shape}${dots}`;
+}
+
+/** seri-03 şıkları: kenar sayısı ve nokta sayısı serbestçe verilir. */
+function series3OptionSvg(sides, dotCount) {
+  return svgDocument(SERIES_CELL, SERIES_CELL, series3Content(sides, dotCount));
+}
+
+/**
+ * seri-04: Nokta sayısı her adımda bir artar (1, 2, 3, …) ve noktaların dolu/boş olması
+ * her adımda değişir. Sayı sürekli artarken dolgu iki adımda bir tekrar eder.
+ */
+function series4Cell(step) {
+  return series4Content(step + 1, step % 2 === 0);
+}
+
+function series4Content(dotCount, isSolid) {
+  const dots = Array.from({ length: dotCount }, (_, index) =>
+    circle(
+      SERIES_CELL / 2 + (index - (dotCount - 1) / 2) * 17,
+      SERIES_CELL / 2,
+      7,
+      isSolid ? "solid" : "line",
+    ),
+  ).join("");
+  return `<rect class="frame" x="2" y="2" width="${SERIES_CELL - 4}" height="${SERIES_CELL - 4}" rx="6" />${dots}`;
+}
+
+function series4OptionSvg(dotCount, isSolid) {
+  return svgDocument(SERIES_CELL, SERIES_CELL, series4Content(dotCount, isSolid));
+}
+
 /** Soruda gösterilen şerit: ilk adımlar ve sonunda soru işareti. */
 function seriesPromptSvg(stepCount, renderCell = seriesCell) {
   const gap = 10;
@@ -806,6 +856,54 @@ function buildFiles() {
     [0.15, 0.7],
     [0.85, 0.7],
   ])); // eksenler ters
+
+  /**
+   * seri-03: kenar sayısı 3, 4, 5, 6 diye artar; nokta sayısı 1-2-3 sırasını izler.
+   * Aranan 5. adım (index 4): yedigen, (4 mod 3) + 1 = 2 nokta.
+   */
+  add("seri-03", "seri.svg", seriesPromptSvg(4, series3Cell));
+  add("seri-03", "a.svg", series3OptionSvg(7, 3)); // kenar doğru, nokta yanlış
+  add("seri-03", "b.svg", series3OptionSvg(6, 2)); // nokta doğru, kenar artmamış
+  add("seri-03", "c.svg", series3OptionSvg(7, 2)); // doğru
+  add("seri-03", "d.svg", series3OptionSvg(8, 1)); // ikisi de yanlış
+
+  /**
+   * seri-04: nokta sayısı 1, 2, 3, 4 diye artar; dolgu dolu/boş olarak dönüşümlü değişir.
+   * Aranan 5. adım (index 4): 5 nokta, dolu.
+   */
+  add("seri-04", "seri.svg", seriesPromptSvg(4, series4Cell));
+  add("seri-04", "a.svg", series4OptionSvg(5, false)); // sayı doğru, dolgu yanlış
+  add("seri-04", "b.svg", series4OptionSvg(5, true)); // doğru
+  add("seri-04", "c.svg", series4OptionSvg(4, true)); // sayı artmamış
+  add("seri-04", "d.svg", series4OptionSvg(6, true)); // sayı fazla artmış
+
+  /**
+   * katlama-04: tek katlama ama iki delik. Açılınca her delik ikiye çıkar; toplam dört delik
+   * katlama çizgisine göre simetrik olur.
+   */
+  add("katlama-04", "soru.svg", foldingPromptSvg({ folds: 1, holes: [[0.35, 0.25], [0.65, 0.7]] }));
+  add("katlama-04", "a.svg", foldingOptionSvg([
+    [0.175, 0.25],
+    [0.825, 0.25],
+    [0.325, 0.7],
+    [0.675, 0.7],
+  ])); // doğru
+  add("katlama-04", "b.svg", foldingOptionSvg([
+    [0.175, 0.25],
+    [0.325, 0.7],
+  ])); // delikler ikiye katlanmamış
+  add("katlama-04", "c.svg", foldingOptionSvg([
+    [0.175, 0.25],
+    [0.825, 0.25],
+    [0.175, 0.7],
+    [0.825, 0.7],
+  ])); // ikinci delik yanlış konumda
+  add("katlama-04", "d.svg", foldingOptionSvg([
+    [0.25, 0.175],
+    [0.75, 0.175],
+    [0.25, 0.825],
+    [0.75, 0.825],
+  ])); // eksenler karışmış
 
   // --- Kısıt çıkarımı ve planlama ---
   add("latin-01", "izgara.svg", latinSquareSvg());

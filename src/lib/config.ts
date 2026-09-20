@@ -24,8 +24,15 @@ export const TEST_SAFETY_LIMIT_SEC = 45 * 60;
  * "sertliği" tek yerden ayarlanabilsin.
  */
 export const QUESTION_TIME = {
-  /** Zorluğa göre beklenen çözüm süresi (saniye). Soru bazında `expectedSec` ile değiştirilebilir. */
-  EXPECTED_SEC_BY_DIFFICULTY: { 1: 45, 2: 75, 3: 120 } as Record<1 | 2 | 3, number>,
+  /**
+   * Zorluğa göre beklenen çözüm süresi (saniye). Bu sürenin üstüne çıkıldığında hız çarpanı
+   * devreye girer ve puan düşmeye başlar. Soru bazında `expectedSec` ile değiştirilebilir.
+   *
+   * Eşikler bilinçli olarak sıkıdır: kolay bir soruda 15 saniyeyi geçmek puan düşürür.
+   * Zor sorularda eşik orantılı biçimde yükseltilmiştir; aksi halde doğal olarak bir dakika
+   * süren bir soruda herkes alt sınıra (SPEED_FACTOR_MIN) yapışır ve çarpan ayırt etmeyi bırakır.
+   */
+  EXPECTED_SEC_BY_DIFFICULTY: { 1: 15, 2: 25, 3: 40 } as Record<1 | 2 | 3, number>,
 
   /**
    * Bir soru için kaydedilebilecek en uzun süre (saniye).

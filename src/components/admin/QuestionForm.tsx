@@ -12,6 +12,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import type { ApiErrorResponse } from "@/lib/api/contracts";
+import { QUESTION_TIME } from "@/lib/config";
 import {
   createEmptyDraft,
   draftToQuestion,
@@ -162,9 +163,13 @@ export function QuestionForm({ initialDraft, mode }: QuestionFormProps) {
             onChange={(event) => update("difficulty", Number(event.target.value) as 1 | 2 | 3)}
             className={inputClass}
           >
-            <option value={1}>1 — Kolay (45 sn)</option>
-            <option value={2}>2 — Orta (75 sn)</option>
-            <option value={3}>3 — Zor (120 sn)</option>
+            {/* Süreler config'ten okunur; eşikler değişirse etiketler kendiliğinden güncellenir. */}
+            {([1, 2, 3] as const).map((level) => (
+              <option key={level} value={level}>
+                {level} — {["Kolay", "Orta", "Zor"][level - 1]} (
+                {QUESTION_TIME.EXPECTED_SEC_BY_DIFFICULTY[level]} sn)
+              </option>
+            ))}
           </select>
         </Field>
 

@@ -51,7 +51,7 @@ Her soru **0–1 arası doğruluk puanı** alır ve bu puan iki katsayıyla çar
 
 - **Zorluk ağırlığı:** Kolay 1, orta 2, zor 3. Zor sorular sonuca daha çok etki eder.
 - **Hız çarpanı:** `beklenen süre / harcanan süre`, en fazla 1, en az 0.5. Beklenen süre
-  zorluğa göre belirlenir (45 / 75 / 120 saniye) ve soru bazında `expectedSec` ile
+  zorluğa göre belirlenir (15 / 25 / 40 saniye) ve soru bazında `expectedSec` ile
   değiştirilebilir. Kendi temposu olan görevlerde (hız görevi, n-back) ve bellek sorusunun
   gösterim süresinde uygulanmaz.
   Bir soruda en fazla 5 dakika kaydedilir.

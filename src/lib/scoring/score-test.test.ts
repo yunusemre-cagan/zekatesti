@@ -94,9 +94,9 @@ describe("scoreTest", () => {
     });
 
     it("yavaş çözülen doğru cevabın puanını düşürür", () => {
-      // single-1: zorluk 1, beklenen 45 sn. 90 saniyede çözülürse çarpan 0.5 olur.
-      const slow = scoreTest(questions, allCorrect, { "single-1": 90 });
-      const fast = scoreTest(questions, allCorrect, { "single-1": 10 });
+      // single-1: zorluk 1, beklenen 15 sn. 30 saniyede çözülürse çarpan 0.5 olur.
+      const slow = scoreTest(questions, allCorrect, { "single-1": 30 });
+      const fast = scoreTest(questions, allCorrect, { "single-1": 8 });
 
       expect(slow.scoreRatio).toBeLessThan(fast.scoreRatio);
       expect(slow.questions[0]?.speedFactor).toBeCloseTo(0.5);
@@ -120,8 +120,8 @@ describe("scoreTest", () => {
 
     it("her soru için beklenen süreyi de döner", () => {
       const result = scoreTest(questions, allCorrect, {});
-      expect(result.questions[0]?.expectedSec).toBe(45); // zorluk 1
-      expect(result.questions[1]?.expectedSec).toBe(120); // zorluk 3
+      expect(result.questions[0]?.expectedSec).toBe(15); // zorluk 1
+      expect(result.questions[1]?.expectedSec).toBe(40); // zorluk 3
     });
 
     it("kategori bazında harcanan süreyi toplar", () => {

@@ -5,9 +5,9 @@ import { capRecordedSec, getExpectedSec, getSpeedFactor } from "./speed-factor";
 
 describe("getExpectedSec", () => {
   it("zorluğa göre varsayılan süreyi verir", () => {
-    expect(getExpectedSec(makeSingleChoice({ difficulty: 1 }))).toBe(45);
-    expect(getExpectedSec(makeSingleChoice({ difficulty: 2 }))).toBe(75);
-    expect(getExpectedSec(makeSingleChoice({ difficulty: 3 }))).toBe(120);
+    expect(getExpectedSec(makeSingleChoice({ difficulty: 1 }))).toBe(15);
+    expect(getExpectedSec(makeSingleChoice({ difficulty: 2 }))).toBe(25);
+    expect(getExpectedSec(makeSingleChoice({ difficulty: 3 }))).toBe(40);
   });
 
   it("soruya özel süre girilmişse onu kullanır", () => {
@@ -28,16 +28,21 @@ describe("capRecordedSec", () => {
 });
 
 describe("getSpeedFactor", () => {
-  // Zorluk 1 → beklenen süre 45 saniye.
+  // Zorluk 1 → beklenen süre 15 saniye.
   const question = makeSingleChoice({ difficulty: 1 });
 
   it("beklenen sürede veya daha hızlı çözümde tam çarpan verir", () => {
-    expect(getSpeedFactor(question, 45)).toBe(1);
-    expect(getSpeedFactor(question, 10)).toBe(1);
+    expect(getSpeedFactor(question, 15)).toBe(1);
+    expect(getSpeedFactor(question, 8)).toBe(1);
   });
 
   it("beklenenin iki katı sürede yarım çarpan verir", () => {
-    expect(getSpeedFactor(question, 90)).toBeCloseTo(0.5);
+    expect(getSpeedFactor(question, 30)).toBeCloseTo(0.5);
+  });
+
+  it("eşiğin hemen üstünde kademeli düşer", () => {
+    expect(getSpeedFactor(question, 20)).toBeCloseTo(0.75);
+    expect(getSpeedFactor(question, 25)).toBeCloseTo(0.6);
   });
 
   it("çarpanı alt sınırın altına düşürmez", () => {
@@ -46,7 +51,7 @@ describe("getSpeedFactor", () => {
 
   it("süre uzadıkça çarpan azalır (monoton)", () => {
     let previous = 1.1;
-    for (const seconds of [30, 60, 90, 120, 200]) {
+    for (const seconds of [10, 20, 30, 45, 90]) {
       const factor = getSpeedFactor(question, seconds);
       expect(factor).toBeLessThanOrEqual(previous);
       previous = factor;
