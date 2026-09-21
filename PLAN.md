@@ -127,7 +127,7 @@ Soru puanı hiçbir zaman negatife düşmez.
 
 ---
 
-## 6. Sorular (42 soru)
+## 6. Sorular (havuzda 54, testte aktif 39)
 
 | # | Kategori | Adet | Not |
 |---|---|---|---|

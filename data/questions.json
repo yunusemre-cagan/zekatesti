@@ -22,7 +22,7 @@
     "difficulty": 2,
     "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n1 → 2 → 6 → 24 → 120 → ?",
     "explanation": "Her terim, bir öncekinin artan çarpanlarla çarpımıdır: 1×2 = 2, 2×3 = 6, 6×4 = 24, 24×5 = 120, 120×6 = 720.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "600" },
       { "id": "b", "text": "660" },
@@ -54,7 +54,7 @@
     "difficulty": 3,
     "prompt": "Dizide soru işareti yerine hangi sayı gelmelidir?\n\n7 → 14 → 10 → 20 → 16 → 32 → ?",
     "explanation": "İşlemler sırayla değişiyor: ×2, −4, ×2, −4, ×2 … Son terim 32 olduğuna göre sıradaki işlem çıkarmadır: 32 − 4 = 28.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "26" },
       { "id": "b", "text": "28" },
@@ -170,7 +170,7 @@
     "difficulty": 2,
     "prompt": "Bütün pilotlar iyi görür. Hiçbir iyi gören kişi bu ilacı kullanamaz.\n\nBuna göre hangisi kesinlikle doğrudur?",
     "explanation": "Pilotların tamamı iyi görenler kümesindedir ve iyi görenlerin hiçbiri ilacı kullanamaz. Dolayısıyla hiçbir pilot bu ilacı kullanamaz.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "Bazı pilotlar bu ilacı kullanabilir." },
       { "id": "b", "text": "Hiçbir pilot bu ilacı kullanamaz." },
@@ -186,7 +186,7 @@
     "difficulty": 3,
     "prompt": "Beş koşucu yarışı şu bilgilerle bitirdi:\n• Deniz, Ece'den önce bitirdi.\n• Can sonuncu oldu.\n• Ece, Berk'ten hemen sonra bitirdi.\n• Ayla birinci değildi.\n\nBuna göre yarışı kim birinci bitirmiştir?",
     "explanation": "Can sonuncudur ve Ayla birinci değildir; geriye Deniz, Berk ve Ece kalır. Ece, Berk'ten hemen sonra bitirdiği için birinci olamaz. Berk birinci olsaydı Ece ikinci olurdu ve Deniz, Ece'den önce bitiremezdi. Geriye tek olasılık kalır: birinci Deniz'dir. (İki dizilim de mümkündür: Deniz-Berk-Ece-Ayla-Can veya Deniz-Ayla-Berk-Ece-Can; ikisinde de birinci Deniz'dir.)",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "Berk" },
       { "id": "b", "text": "Deniz" },
@@ -250,7 +250,7 @@
     "difficulty": 2,
     "prompt": "Susuzluk : Su = Yorgunluk : ?",
     "explanation": "Susuzluğu gideren şey sudur; yorgunluğu gideren şey ise uykudur. Diğer şıklar uykuyla ilişkili yer, zaman veya geçici bir uyarıcıdır; ihtiyacın kendisini karşılamaz.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "Yatak" },
       { "id": "b", "text": "Uyku" },
@@ -301,7 +301,7 @@
     "prompt": "Yukarıdaki cisim döndürüldüğünde aşağıdakilerden hangisi elde edilir?",
     "promptImage": "/questions/uzamsal-03/soru.svg",
     "explanation": "Cisim, tamamı aynı düzlemde bulunan üç küpten oluşur. A şıkkı bu cismin 90° döndürülmüş halidir. B'de küplerden biri yukarı çıkmış, C'de dört küp var, D'de ise yalnızca iki küp var.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "image": "/questions/uzamsal-03/a.svg" },
       { "id": "b", "image": "/questions/uzamsal-03/b.svg" },
@@ -346,7 +346,7 @@
     "difficulty": 2,
     "prompt": "Ekranda sırayla harfler gösterilecek. Harfleri GÖSTERİLDİĞİ SIRAYLA yazın.",
     "explanation": "Gösterilen dizi K-M-B-T-R-Z-L idi ve aynı sırayla yazılması gerekiyordu.",
-    "active": true,
+    "active": false,
     "sequence": ["K", "M", "B", "T", "R", "Z", "L"],
     "itemDisplayMs": 900,
     "transform": "same"
@@ -386,7 +386,7 @@
     "difficulty": 3,
     "prompt": "Bir rafta soldan sağa dört kitap dizilecek: matematik, roman, şiir, tarih.\n• Tarih en sağdadır.\n• Şiir, tarihin hemen solundadır.\n• Matematik, romanın solundadır.\n\nSoldan ikinci sıraya hangi kitap gelir?",
     "explanation": "Tarih 4., şiir ise 3. sıradadır. Geriye kalan iki kitaptan matematik, romanın solunda olmak zorunda olduğu için matematik 1., roman 2. sıraya gelir. Dizilim: matematik, roman, şiir, tarih.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "Matematik" },
       { "id": "b", "text": "Roman" },
@@ -454,7 +454,7 @@
     "difficulty": 2,
     "prompt": "Ekranda gösterilen şeklin aynısını şıklardan seçin. Şekiller birbirine benzer ve her maddede şıkların yeri değişir; hızlı ama dikkatli bakın. Yanlış işaretler puan düşürür.",
     "explanation": "Şekiller yalnızca tek bir ayrıntıda farklıdır: düz kare, köşesi kesik kare, üst kenarında çentik olan kare, köşegenli kare ve ortasında nokta olan kare.",
-    "active": true,
+    "active": false,
     "timeLimitSec": 45,
     "shuffleOptions": true,
     "options": [
@@ -483,7 +483,7 @@
     "category": "odd_one_out",
     "difficulty": 3,
     "prompt": "Aşağıdakilerden hangisi diğerlerinden farklıdır?\n\nKömür — Elmas — Grafit — Kuvars",
-    "explanation": "Kömür, elmas ve grafit karbondan oluşur; aralarındaki fark yalnızca karbon atomlarının dizilişidir. Kuvars ise silisyum dioksittir, yani farklı bir elementten oluşur.",
+    "explanation": "Kömür, elmas ve grafitin üçü de karbon temellidir; elmas ile grafit karbonun farklı dizilişleri, kömür ise ağırlıklı olarak karbondan oluşan bir kayaçtır. Kuvars ise silisyum dioksittir, yani karbon değil silisyum içerir.",
     "active": true,
     "options": [
       { "id": "a", "text": "Kömür" },
@@ -498,16 +498,16 @@
     "type": "single_choice",
     "category": "odd_one_out",
     "difficulty": 2,
-    "prompt": "Aşağıdaki sayılardan hangisi diğerlerinden farklıdır?\n\n27 — 64 — 100 — 125",
-    "explanation": "27 = 3³, 64 = 4³ ve 125 = 5³ tam küptür. 100 ise tam kare (10²) olmasına rağmen tam küp değildir.",
-    "active": true,
+    "prompt": "Aşağıdaki sayılardan hangisi diğerlerinden farklıdır?\n\n100 — 125 — 216 — 343",
+    "explanation": "125 = 5³, 216 = 6³ ve 343 = 7³ tam küptür; 100 tam küp değildir. Ayrıca 100 tam karedir (10²), diğer üçü ise tam kare değildir. Her iki bakımdan da ayrışan sayı 100'dür.",
+    "active": false,
     "options": [
-      { "id": "a", "text": "27" },
-      { "id": "b", "text": "64" },
-      { "id": "c", "text": "100" },
-      { "id": "d", "text": "125" }
+      { "id": "a", "text": "100" },
+      { "id": "b", "text": "125" },
+      { "id": "c", "text": "216" },
+      { "id": "d", "text": "343" }
     ],
-    "correctOptionId": "c"
+    "correctOptionId": "a"
   },
   {
     "id": "sifre-01",
@@ -532,7 +532,7 @@
     "difficulty": 3,
     "prompt": "Bir şifrede KALEM kelimesi 51432 biçiminde yazılıyor.\n\nBuna göre LEKAM nasıl yazılır?",
     "explanation": "Önce harf-rakam eşleşmesi çıkarılır: K=5, A=1, L=4, E=3, M=2. Ardından yeni kelimenin harfleri sırayla bu rakamlara çevrilir: L-E-K-A-M = 4-3-5-1-2. Dikkat edilmesi gereken nokta, rakamların kelimedeki sıraya göre değil harflere göre sabit olmasıdır.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "text": "43512" },
       { "id": "b", "text": "43521" },
@@ -659,7 +659,7 @@
     "prompt": "Matristeki boş hücreye hangi şekil gelmelidir? (Birden fazla kural aynı anda işliyor.)",
     "promptImage": "/questions/matris-05/matris.svg",
     "explanation": "Üç kural birlikte işler: satır kenar sayısını belirler (üçgen, kare, beşgen), sütun şeklin dönüş açısını belirler (her sütunda biraz daha döner), alttaki nokta sayısı ise her satır ve sütunda 1-2-3 sırasını kaydırarak izler. Eksik hücrede beşgen, en çok dönmüş hali ve iki nokta bulunmalıdır.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "image": "/questions/matris-05/a.svg" },
       { "id": "b", "image": "/questions/matris-05/b.svg" },
@@ -792,7 +792,7 @@
     "difficulty": 2,
     "prompt": "Her maddede bir harf dizisi göreceksiniz. Dizide M harfi VARSA \"Var\", yoksa \"Yok\" seçin. Hızlı ama dikkatli bakın; yanlış işaretler puan düşürür.",
     "explanation": "Görev, dizide hedef harfi aramaya dayanır. Doğru cevaplar sırasıyla: Var, Yok, Var, Yok, Yok, Var, Var, Yok, Var, Var.",
-    "active": true,
+    "active": false,
     "timeLimitSec": 40,
     "options": [
       { "id": "v", "text": "Var" },
@@ -827,15 +827,15 @@
     ],
     "items": [
       { "id": "i1", "stimulus": { "text": "4719 — 4719" }, "correctOptionId": "a" },
-      { "id": "i2", "stimulus": { "text": "58302 — 58320" }, "correctOptionId": "f" },
-      { "id": "i3", "stimulus": { "text": "91746 — 91746" }, "correctOptionId": "a" },
-      { "id": "i4", "stimulus": { "text": "30298 — 30928" }, "correctOptionId": "f" },
-      { "id": "i5", "stimulus": { "text": "672415 — 672415" }, "correctOptionId": "a" },
+      { "id": "i2", "stimulus": { "text": "91746 — 91746" }, "correctOptionId": "a" },
+      { "id": "i3", "stimulus": { "text": "58302 — 58320" }, "correctOptionId": "f" },
+      { "id": "i4", "stimulus": { "text": "672415 — 672415" }, "correctOptionId": "a" },
+      { "id": "i5", "stimulus": { "text": "30298 — 30928" }, "correctOptionId": "f" },
       { "id": "i6", "stimulus": { "text": "845163 — 845136" }, "correctOptionId": "f" },
       { "id": "i7", "stimulus": { "text": "20507 — 20507" }, "correctOptionId": "a" },
       { "id": "i8", "stimulus": { "text": "73894 — 73984" }, "correctOptionId": "f" },
-      { "id": "i9", "stimulus": { "text": "158236 — 158236" }, "correctOptionId": "a" },
-      { "id": "i10", "stimulus": { "text": "409617 — 406917" }, "correctOptionId": "f" }
+      { "id": "i9", "stimulus": { "text": "409617 — 406917" }, "correctOptionId": "f" },
+      { "id": "i10", "stimulus": { "text": "158236 — 158236" }, "correctOptionId": "a" }
     ]
   },
   {
@@ -878,7 +878,7 @@
     "prompt": "Kare bir kâğıt ortadan ikiye katlanıyor ve katlı haldeyken İKİ delik deliniyor. Kâğıt açıldığında hangi desen görülür?",
     "promptImage": "/questions/katlama-04/soru.svg",
     "explanation": "Tek katlama iki kat oluşturur; her delik iki kattan birden geçer. İki delik açıldığında toplam dört delik oluşur ve her çift, katlama çizgisine göre simetrik olarak karşılıklı konumlanır. Deliklerin yükseklikleri değişmez.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "image": "/questions/katlama-04/a.svg" },
       { "id": "b", "image": "/questions/katlama-04/b.svg" },
@@ -912,7 +912,7 @@
     "prompt": "Şekil serisi aşağıdaki gibi ilerliyor. Sıradaki kare hangisidir?",
     "promptImage": "/questions/seri-04/seri.svg",
     "explanation": "Nokta sayısı her adımda bir artar (1, 2, 3, 4) ve noktaların dolgusu dolu ile boş arasında dönüşümlü değişir. Beşinci adımda beş nokta olmalı ve dolgu yeniden doluya dönmelidir.",
-    "active": true,
+    "active": false,
     "options": [
       { "id": "a", "image": "/questions/seri-04/a.svg" },
       { "id": "b", "image": "/questions/seri-04/b.svg" },
