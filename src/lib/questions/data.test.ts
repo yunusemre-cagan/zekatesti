@@ -4,7 +4,12 @@
  * Soru dosyası elle veya admin paneliyle düzenlenebildiği için, bozuk bir verinin
  * deploy edilmeden önce yakalanması amaçlanır:
  *  - dosya şemaya uygun olmalı,
- *  - referans verilen her görsel `public/` altında gerçekten bulunmalı.
+ *  - referans verilen her görsel `public/` altında gerçekten bulunmalı,
+ *  - test sırasında aynı kategoriden iki soru yan yana gelmemeli,
+ *  - çok maddeli görevlerin cevap anahtarı ezberlenebilir bir desen taşımamalı.
+ *
+ * Son madde deneyimle eklendi: hem hız görevinde hem n-back görevinde cevaplar düzenli
+ * aralıklarla dizilmişti ve deseni fark eden kişi soruya bakmadan doğru yapabiliyordu.
  */
 import { access } from "node:fs/promises";
 import path from "node:path";
@@ -63,5 +68,49 @@ describe("data/questions.json", () => {
   it("test sırasında aynı kategoriden iki soru yan yana gelmez", async () => {
     const ordered = getTestQuestions(await repo.getAll());
     expect(findAdjacentSameCategory(ordered), "Ardışık aynı kategori").toEqual([]);
+  });
+
+  it("hız görevlerinin cevap anahtarı düzenli bir desen izlemez", async () => {
+    const questions = await repo.getAll();
+    const desenliler: string[] = [];
+
+    for (const question of questions) {
+      if (question.type !== "speed_task") continue;
+      const key = question.items.map((item) => item.correctOptionId);
+
+      // 1, 2 ve 3 adımlık tekrar: "hep aynı", "bir aynı bir farklı" gibi diziler ezberlenebilir.
+      for (const period of [1, 2, 3]) {
+        if (key.length <= period) continue;
+        const isPeriodic = key.every((value, index) => index < period || value === key[index - period]);
+        if (isPeriodic) desenliler.push(`${question.id}: ${period} adımda tekrar eden anahtar`);
+      }
+    }
+
+    expect(desenliler, "Ezberlenebilir cevap anahtarı").toEqual([]);
+  });
+
+  it("n-back görevlerinde eşleşmeler düzensiz aralıklarla dağılır", async () => {
+    const questions = await repo.getAll();
+    const sorunlar: string[] = [];
+
+    for (const question of questions) {
+      if (question.type !== "nback_task") continue;
+
+      const targets = question.sequence.flatMap((item, index) =>
+        index >= question.n && item === question.sequence[index - question.n] ? [index] : [],
+      );
+      if (targets.length < 3) {
+        sorunlar.push(`${question.id}: eşleşme sayısı çok az (${targets.length})`);
+        continue;
+      }
+
+      // Aralıklar tek bir değerden ibaretse görev ritimle çözülebilir hale gelir.
+      const gaps = targets.slice(1).map((value, index) => value - targets[index]!);
+      if (new Set(gaps).size < 2) {
+        sorunlar.push(`${question.id}: eşleşmeler ${gaps[0]} adımda bir tekrar ediyor`);
+      }
+    }
+
+    expect(sorunlar, "Ezberlenebilir eşleşme deseni").toEqual([]);
   });
 });

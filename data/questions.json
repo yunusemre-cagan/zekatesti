@@ -629,10 +629,10 @@
     "category": "working_memory",
     "difficulty": 3,
     "prompt": "Harfler tek tek akacak. Ekrandaki harf, iki önceki harfle aynı olduğunda \"Eşleşme\" düğmesine basın.",
-    "explanation": "Dizi K-M-K-T-R-T-Z-B-Z-N-M-N-K-R-K-T idi. İki önceki harfle aynı olan beş konum vardı: 3. (K), 6. (T), 9. (Z), 12. (N) ve 15. (K) harfler.",
+    "explanation": "Dizi L-B-L-B-Z-M-N-Z-K-Z-M-K-L-K-Z-K-L-Z idi. İki önceki harfle aynı olan beş konum vardı: 3, 4, 10, 14 ve 16. adımlar. Ayrıca 8, 12 ve 18. adımlardaki harfler bir veya üç adım öncesiyle aynıydı; bunlar tanıdık gelse de eşleşme değildir ve basıldığında puan düşürür.",
     "active": true,
     "n": 2,
-    "sequence": ["K", "M", "K", "T", "R", "T", "Z", "B", "Z", "N", "M", "N", "K", "R", "K", "T"],
+    "sequence": ["L", "B", "L", "B", "Z", "M", "N", "Z", "K", "Z", "M", "K", "L", "K", "Z", "K", "L", "Z"],
     "itemDisplayMs": 2000
   },
   {
