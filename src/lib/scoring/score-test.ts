@@ -11,6 +11,7 @@
  *
  * Kullanım: /api/test/submit route'u tarafından çağrılır; ürettiği sonuç sonuç ekranında gösterilir.
  */
+import { IQ_SCALE, MIN_ANSWERED_RATIO } from "@/lib/config";
 import { QUESTION_CATEGORIES, type Question, type QuestionCategory } from "@/lib/questions/schema";
 import type { AnswerMap, DurationMap } from "@/lib/test/answers";
 import { evaluateAnswer, type AnswerStatus } from "./check-answer";
@@ -53,6 +54,18 @@ export interface TestResult {
   totalQuestions: number;
   /** Doğruluk puanı tam olan soru sayısı (hız çarpanından bağımsız). */
   correctCount: number;
+  /** Cevaplanan (boş bırakılmayan) soru sayısı. */
+  answeredCount: number;
+  /**
+   * Sonuç geçerli mi? Cevaplanan soru oranı eşiğin altındaysa `false` olur ve arayüz
+   * IQ değeri yerine "hesaplanamadı" açıklaması gösterir.
+   */
+  isValid: boolean;
+  /**
+   * IQ değeri ölçeğin alt ya da üst sınırına dayandı mı? Dayandıysa gerçek değer bu sayının
+   * dışında olabilir; arayüz bunu "70 veya altı" biçiminde belirtir.
+   */
+  iqBound?: "floor" | "ceiling";
   /** Ağırlıklı ve hız çarpanı uygulanmış başarı oranı (0–1). */
   scoreRatio: number;
   /** Yalnızca doğruluktan gelen başarı oranı; hızın etkisini göstermek için. */
@@ -133,11 +146,29 @@ export function scoreTest(
   const scoreRatio = maxTotal > 0 ? earnedTotal / maxTotal : 0;
   const estimatedIq = estimateIq(scoreRatio);
 
+  const answeredCount = outcomes.filter((o) => o.status !== "unanswered").length;
+  const isValid =
+    questions.length > 0 && answeredCount / questions.length >= MIN_ANSWERED_RATIO;
+
+  /**
+   * Sınıra dayanma kontrolü: `estimateIq` sonucu [MIN, MAX] aralığına kırptığı için,
+   * kırpılıp kırpılmadığını anlamak üzere ham değer yeniden hesaplanır.
+   */
+  const rawIq =
+    IQ_SCALE.MEAN +
+    ((scoreRatio - IQ_SCALE.EXPECTED_SCORE_MEAN) / IQ_SCALE.EXPECTED_SCORE_SD) *
+      IQ_SCALE.STANDARD_DEVIATION;
+  const iqBound =
+    rawIq < IQ_SCALE.MIN ? ("floor" as const) : rawIq > IQ_SCALE.MAX ? ("ceiling" as const) : undefined;
+
   return {
     estimatedIq,
     percentile: iqToPercentile(estimatedIq),
     totalQuestions: questions.length,
     correctCount: outcomes.filter((o) => o.status === "correct").length,
+    answeredCount,
+    isValid,
+    ...(iqBound !== undefined && { iqBound }),
     scoreRatio,
     accuracyRatio: maxTotal > 0 ? accuracyTotal / maxTotal : 0,
     totalSeconds: Math.round(totalSeconds),

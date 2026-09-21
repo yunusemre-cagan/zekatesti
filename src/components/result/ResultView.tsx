@@ -10,6 +10,7 @@
 
 import { useMemo, useSyncExternalStore } from "react";
 import Link from "next/link";
+import { MIN_ANSWERED_RATIO } from "@/lib/config";
 import { CATEGORY_LABELS } from "@/lib/questions/labels";
 import type { TestResult } from "@/lib/scoring/score-test";
 import type { AnswerStatus } from "@/lib/scoring/check-answer";
@@ -66,19 +67,42 @@ export function ResultView() {
 
   return (
     <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-8 p-4">
-      <section className="flex flex-col items-center gap-2 pt-6 text-center">
-        <p className="text-zinc-500">Tahmini IQ</p>
-        <p className="text-6xl font-semibold">{result.estimatedIq}</p>
-        {/* Cümle bilinçli olarak sayıya ek almayacak şekilde kuruldu: Türkçede ek, sayının
-            okunuşuna göre değişir (%50'si, %99'u) ve bu dinamik olarak doğru üretilemez. */}
-        <p className="text-zinc-600 dark:text-zinc-400">
-          Katılımcıların yaklaşık %{result.percentile} kadarı bu sonucun altında kalır.
-        </p>
-      </section>
+      {result.isValid ? (
+        <section className="flex flex-col items-center gap-2 pt-6 text-center">
+          <p className="text-zinc-500">Tahmini IQ</p>
+          <p className="text-6xl font-semibold">
+            {/* Sonuç ölçeğin ucuna dayandıysa kesin bir sayı vermek yanıltıcı olur. */}
+            {result.iqBound === "floor"
+              ? `${result.estimatedIq} veya altı`
+              : result.iqBound === "ceiling"
+                ? `${result.estimatedIq} veya üstü`
+                : result.estimatedIq}
+          </p>
+          {/* Cümle bilinçli olarak sayıya ek almayacak şekilde kuruldu: Türkçede ek, sayının
+              okunuşuna göre değişir (%50'si, %99'u) ve bu dinamik olarak doğru üretilemez. */}
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Katılımcıların yaklaşık %{result.percentile} kadarı bu sonucun altında kalır.
+          </p>
+        </section>
+      ) : (
+        <section className="flex flex-col gap-2 rounded-lg border border-amber-300 p-4 dark:border-amber-800">
+          <h1 className="text-xl font-medium">Sonuç hesaplanamadı</h1>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            {result.totalQuestions} sorudan {result.answeredCount} tanesini cevapladınız.
+            Tahmini bir IQ değeri verebilmek için en az{" "}
+            {Math.ceil(result.totalQuestions * MIN_ANSWERED_RATIO)} soru cevaplanmalı. Çok az
+            soru cevaplandığında çıkan sayı bir ölçüm değil, yalnızca ölçeğin alt sınırı olur;
+            bu yüzden göstermiyoruz.
+          </p>
+          <p className="text-zinc-600 dark:text-zinc-400">
+            Aşağıdaki çözüm açıklamalarını inceleyebilir, dilerseniz testi baştan çözebilirsiniz.
+          </p>
+        </section>
+      )}
 
       <section className="grid grid-cols-3 gap-3 text-center">
         <SummaryCard label="Doğru" value={`${result.correctCount} / ${result.totalQuestions}`} />
-        <SummaryCard label="Başarı" value={`%${Math.round(result.scoreRatio * 100)}`} />
+        <SummaryCard label="Cevaplanan" value={`${result.answeredCount} / ${result.totalQuestions}`} />
         <SummaryCard label="Toplam süre" value={formatDuration(result.totalSeconds)} />
       </section>
 
@@ -94,6 +118,7 @@ export function ResultView() {
         </section>
       )}
 
+      {result.isValid && (
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Kategorilere göre</h2>
         {result.categories.map((category) => (
@@ -114,6 +139,7 @@ export function ResultView() {
           </div>
         ))}
       </section>
+      )}
 
       <section className="flex flex-col gap-3">
         <h2 className="text-lg font-medium">Soru soru inceleme</h2>

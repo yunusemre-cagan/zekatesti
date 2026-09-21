@@ -98,6 +98,8 @@ Her şık metin, görsel veya ikisini birden içerebilir. Soru metnine de görse
 4. **`/api/test/submit`** — Puanlama tamamen sunucuda yapılır.
 5. **`/result`** — Tahmini IQ, doğru sayısı, kategori bazlı başarı, geçen süre, soru açıklamaları. "Klinik geçerliliği olmayan tahmini sonuçtur" uyarısı.
 
+**Geçerlilik eşiği:** Soruların en az %60'ı cevaplanmamışsa IQ gösterilmez.
+
 **Puanlama:** Her soru zorluğu kadar ağırlık alır (1/2/3) ve 0–1 arası puan alır. Ağırlıklı başarı
 oranı, ortalaması 100 ve standart sapması 15 olan dağılıma göre IQ değerine çevrilir, 70–145
 aralığında sınırlanır ve **her zaman tam sayı** olarak gösterilir. Dönüşüm parametreleri

@@ -11,6 +11,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { MIN_ANSWERED_RATIO } from "@/lib/config";
 import { useCountdown } from "@/hooks/use-countdown";
 import { useCurrentQuestionSeconds } from "@/hooks/use-elapsed-seconds";
 import { useTestSession } from "@/hooks/use-test-session";
@@ -118,6 +119,8 @@ export function TestRunner() {
       {isFinishConfirmOpen && (
         <FinishConfirm
           unansweredCount={unansweredCount}
+          answeredCount={session.answeredCount}
+          requiredCount={Math.ceil(state.questions.length * MIN_ANSWERED_RATIO)}
           onCancel={() => setFinishConfirmOpen(false)}
           onConfirm={session.submit}
         />
@@ -126,16 +129,27 @@ export function TestRunner() {
   );
 }
 
-/** Testi bitirmeden önce, cevaplanmamış soru varsa kullanıcıyı uyaran onay kutusu. */
+/**
+ * Testi bitirmeden önce kullanıcıyı uyaran onay kutusu.
+ *
+ * Cevaplanan soru sayısı geçerlilik eşiğinin altındaysa, sonucun hesaplanamayacağı
+ * bitirmeden ÖNCE söylenir; kullanıcı sonuç ekranında sürprizle karşılaşmaz.
+ */
 function FinishConfirm({
   unansweredCount,
+  answeredCount,
+  requiredCount,
   onCancel,
   onConfirm,
 }: {
   unansweredCount: number;
+  answeredCount: number;
+  requiredCount: number;
   onCancel: () => void;
   onConfirm: () => void;
 }) {
+  const isBelowThreshold = answeredCount < requiredCount;
+
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 p-4">
       <div className="flex w-full max-w-sm flex-col gap-4 rounded-xl bg-background p-5">
@@ -146,6 +160,13 @@ function FinishConfirm({
             : "Tüm soruları cevapladınız."}{" "}
           Bitirdikten sonra cevaplarınızı değiştiremezsiniz.
         </p>
+        {isBelowThreshold && (
+          <p className="rounded-lg border border-amber-300 p-3 text-sm text-amber-800 dark:border-amber-800 dark:text-amber-300">
+            Şu ana kadar {answeredCount} soru cevapladınız. Tahmini IQ hesaplanabilmesi için en
+            az {requiredCount} soru gerekiyor; şimdi bitirirseniz sonuç sayfasında yalnızca
+            çözüm açıklamalarını görürsünüz.
+          </p>
+        )}
         <div className="flex justify-end gap-3">
           <button
             type="button"

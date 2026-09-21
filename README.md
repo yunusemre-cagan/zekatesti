@@ -63,8 +63,14 @@ Her soru **0–1 arası doğruluk puanı** alır ve bu puan iki katsayıyla çar
 bırakmak nötrdür. Katsayılar, rastgele veya "hepsini işaretle" taktiğiyle beklenen puanın
 sıfır olacağı şekilde seçilmiştir. Soru puanı hiçbir zaman negatife düşmez.
 
+**Geçerlilik:** Soruların en az %60'ı cevaplanmadıysa IQ değeri gösterilmez; bunun yerine
+"sonuç hesaplanamadı" açıklaması ve çözümler gösterilir. Az sayıda soru cevaplandığında
+çıkan değer bir ölçüm değil, yalnızca ölçeğin alt sınırıdır. Kullanıcı bu durumda testi
+bitirmeden önce de uyarılır.
+
 **IQ dönüşümü:** Ağırlıklı başarı oranı, ortalaması 100 ve standart sapması 15 olan
-dağılıma göre tam sayıya çevrilir ve 70–145 aralığına sınırlanır. Gerçek norm verisi
+dağılıma göre tam sayıya çevrilir ve 70–145 aralığına sınırlanır. Sonuç bu aralığın ucuna
+dayandığında kesin bir sayı yerine "70 veya altı" biçiminde gösterilir. Gerçek norm verisi
 bulunmadığı için dönüşüm, [`src/lib/config.ts`](src/lib/config.ts) içindeki iki varsayıma
 dayanır; katılımcı verisi toplandığında yalnızca o değerlerin güncellenmesi yeterlidir.
 

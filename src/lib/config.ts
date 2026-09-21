@@ -61,6 +61,15 @@ export const QUESTION_TIME = {
  *
  * Sonuç, uç değerlerin anlamsız görünmemesi için [MIN, MAX] aralığına sınırlanır.
  */
+/**
+ * Sonucun geçerli sayılması için cevaplanması gereken soru oranı.
+ *
+ * Neden var: Az sayıda soru cevaplayan biri için hesaplanan değer bir ölçüm değildir.
+ * Hiç cevap vermeyen kullanıcı da ölçeğin alt sınırını görür ve bu, "ölçemedim" yerine
+ * "ölçtüm, düşük çıktı" izlenimi verir. Eşiğin altında kalan testlerde IQ gösterilmez.
+ */
+export const MIN_ANSWERED_RATIO = 0.6;
+
 export const IQ_SCALE = {
   MEAN: 100,
   STANDARD_DEVIATION: 15,

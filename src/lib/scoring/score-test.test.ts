@@ -131,6 +131,64 @@ describe("scoreTest", () => {
     });
   });
 
+  describe("geçerlilik eşiği", () => {
+    it("yeterince soru cevaplanmışsa sonuç geçerlidir", () => {
+      const result = scoreTest(questions, allCorrect, {});
+      expect(result.isValid).toBe(true);
+      expect(result.answeredCount).toBe(4);
+    });
+
+    it("hiç cevap verilmemişse sonuç geçersizdir", () => {
+      const result = scoreTest(questions, {}, {});
+      expect(result.isValid).toBe(false);
+      expect(result.answeredCount).toBe(0);
+    });
+
+    it("eşiğin altında cevap verilmişse sonuç geçersizdir", () => {
+      // Dört sorudan yalnızca biri cevaplanmış (%25); eşik %60.
+      const result = scoreTest(questions, { "single-1": allCorrect["single-1"]! }, {});
+      expect(result.answeredCount).toBe(1);
+      expect(result.isValid).toBe(false);
+    });
+
+    it("cevabın doğru olması gerekmez, cevaplanmış olması yeterlidir", () => {
+      const hepsiYanlis: AnswerMap = {
+        "single-1": { type: "single_choice", optionId: "a" },
+        "multi-1": { type: "multi_choice", optionIds: ["b"] },
+        "memory-1": { type: "memory_sequence", value: "000" },
+        "speed-1": { type: "speed_task", responses: { i1: "2" } },
+      };
+      const result = scoreTest(questions, hepsiYanlis, {});
+      expect(result.isValid).toBe(true);
+      expect(result.correctCount).toBe(0);
+    });
+
+    it("boş soru listesinde sonuç geçersizdir", () => {
+      expect(scoreTest([], {}, {}).isValid).toBe(false);
+    });
+  });
+
+  describe("ölçek sınırları", () => {
+    it("puan alt sınırın altına düşerse sonucu 'floor' olarak işaretler", () => {
+      const result = scoreTest(questions, {}, {});
+      expect(result.estimatedIq).toBe(IQ_SCALE.MIN);
+      expect(result.iqBound).toBe("floor");
+    });
+
+    it("tam puanda üst sınıra dayanmaz (mevcut kalibrasyonda tavan erişilemez)", () => {
+      // %100 başarı 144 verir; üst sınır 145 olduğu için kırpma olmaz ve işaret konmaz.
+      const result = scoreTest(questions, allCorrect, {});
+      expect(result.estimatedIq).toBeLessThan(IQ_SCALE.MAX);
+      expect(result.iqBound).toBeUndefined();
+    });
+
+    it("sınırlar arasında kalan sonuçta işaret bulunmaz", () => {
+      // Yalnızca zorluk 3 olan çoklu seçim doğru → 3 / 8 ≈ %38 → sınırlar arasında.
+      const result = scoreTest(questions, { "multi-1": allCorrect["multi-1"]! }, {});
+      expect(result.iqBound).toBeUndefined();
+    });
+  });
+
   it("boş soru listesinde hata vermez", () => {
     const result = scoreTest([], {}, {});
     expect(result.scoreRatio).toBe(0);
